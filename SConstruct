@@ -34,6 +34,7 @@ link_shared_library_message = '%sLinking Shared Library %s==> %s$TARGET%s' % \
    (colors['red'], colors['purple'], colors['yellow'], colors['end'])
 
 
+VariantDir('build', 'src', duplicate=0)
 env = Environment(
   CXXCOMSTR = compile_source_message,
   CCCOMSTR = compile_source_message,
@@ -49,6 +50,5 @@ env.Append(CCFLAGS = ['-Wall', '-Werror'])
 env.Append(LIBPATH = ['/usr/local/lib/'])
 env.Append(LINKFLAGS = [
     '-framework', 'SDL2', '-framework', 'OpenGL', '-framework', 'Cocoa'])
-
-t = env.Program(target="bin/dwarves", source=["src/main.c"])
+t = env.Program(target="bin/dwarves", source=["build/main.c"])
 Default(t)

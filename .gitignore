@@ -1,3 +1,4 @@
 bin
+build
 .sconsign.dblite
 *.o

@@ -2,15 +2,13 @@
 #include <OpenGL/gl3.h>
 
 #include <stdio.h>
-
-
-#define DT 10
+#include "config.h"
 
 
 void print_error(const char* message) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s SDL error=%s\n", message);
     exit(1);
-} 
+}
 
 
 typedef struct {
@@ -43,12 +41,12 @@ Game* game_create(int width, int height) {
 
     game->gl = SDL_GL_CreateContext(game->window);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, DW_OPENGL_MAJOR_VERSION);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, DW_OPENGL_MINOR_VERSION);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, DW_DOUBLEBUFFER);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, DW_DEPTH_SIZE);
 
     game->last_time = SDL_GetTicks();
 
@@ -99,8 +97,8 @@ int main() {
             }
         }
 
-        while(accumulator >= DT) {
-            accumulator -= DT;
+        while(accumulator >= DW_DELTA_TIME) {
+            accumulator -= DW_DELTA_TIME;
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

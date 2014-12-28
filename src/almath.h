@@ -54,6 +54,12 @@ mat4 m4_identity();
 mat4 m4_scalef(float i);
 mat4 m4_scale(const vec3* v);
 mat4 m4_translate(const vec3* v);
+
+mat4 m4_rotate(const vec3* v);
+mat4 m4_rotatex(float x);
+mat4 m4_rotatey(float y);
+mat4 m4_rotatez(float z);
+
 vec3* m4_x_v3(vec3* out, const mat4* m, const vec3* v);
 vec4* m4_x_v4(vec4* out, const mat4* m, const vec4* v);
 mat4* m4_x_m4(mat4* out, const mat4* a, const mat4* b);

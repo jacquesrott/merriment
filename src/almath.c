@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "almath.h"
 
 
@@ -36,6 +38,7 @@ vec2* v2_dot_v2(vec2* out, const vec2* a, const vec2* b) {
     out->y = a->x * b->y + a->y * b->y;
     return out;
 }
+
 
 // Vec3
 
@@ -187,6 +190,59 @@ mat4 m4_translate(const vec3* v) {
             {1, 0, 0, v->x},
             {0, 1, 0, v->y},
             {0, 0, 1, v->z},
+            {0, 0, 0, 1}
+        }
+    };
+    return m;
+}
+
+
+mat4 m4_rotate(const vec3* v) {
+    mat4 m = {
+        {
+            {cos(v->y)*cos(v->z), cos(v->z)*sin(v->x)*sin(v->y) - cos(v->x)*sin(v->z), cos(v->x)*cos(v->z)*sin(v->y) + sin(v->x)*sin(v->z), 0},
+            {cos(v->y)*sin(v->z), cos(v->x)*cos(v->z) + sin(v->x)*sin(v->y)*sin(v->z), -cos(v->z)*sin(v->x) + cos(v->x)*sin(v->y)*sin(v->z), 0},
+            {-sin(v->y), cos(v->y)*sin(v->x), cos(v->x)*cos(v->y), 0},
+            {0, 0, 0, 1}
+        }
+    };
+    return m;
+}
+
+
+mat4 m4_rotatex(float x) {
+    mat4 m = {
+        {
+            {1, 0, 0, 0},
+            {0, cos(x), -sin(x), 0},
+            {0, sin(x), cos(x), 0},
+            {0, 0, 0, 1}
+        }
+    };
+    return m;
+}
+
+
+mat4 m4_rotatey(float y) {
+    mat4 m = {
+        {
+            {cos(y), 0, sin(y), 0},
+            {0, 1, 0, 0},
+            {-sin(y), 0, cos(y), 0},
+            {0, 0, 0, 1}
+        }
+    };
+    return m;
+}
+
+
+
+mat4 m4_rotatez(float z) {
+    mat4 m = {
+        {
+            {cos(z), -sin(z), 0, 0},
+            {sin(z), cos(z), 0, 0},
+            {0, 0, 1, 0},
             {0, 0, 0, 1}
         }
     };

@@ -198,11 +198,17 @@ mat4 m4_translate(const vec3* v) {
 
 
 mat4 m4_rotate(const vec3* v) {
+    float cx = cos(v->x);
+    float sx = sin(v->x);
+    float cy = cos(v->y);
+    float sy = sin(v->y);
+    float cz = cos(v->z);
+    float sz = sin(v->z);
     mat4 m = {
         {
-            {cos(v->y)*cos(v->z), cos(v->z)*sin(v->x)*sin(v->y) - cos(v->x)*sin(v->z), cos(v->x)*cos(v->z)*sin(v->y) + sin(v->x)*sin(v->z), 0},
-            {cos(v->y)*sin(v->z), cos(v->x)*cos(v->z) + sin(v->x)*sin(v->y)*sin(v->z), -cos(v->z)*sin(v->x) + cos(v->x)*sin(v->y)*sin(v->z), 0},
-            {-sin(v->y), cos(v->y)*sin(v->x), cos(v->x)*cos(v->y), 0},
+            {cy*cz, cz*sx*sy - cx*sz, cx*cz*sy + sx*sz, 0},
+            {cy*sz, cx*cz + sx*sy*sz, -cz*sx + cx*sy*sz, 0},
+            {-sy, cy*sx, cx*cy, 0},
             {0, 0, 0, 1}
         }
     };
@@ -211,11 +217,13 @@ mat4 m4_rotate(const vec3* v) {
 
 
 mat4 m4_rotatex(float x) {
+    float cx = cos(x);
+    float sx = sin(x);
     mat4 m = {
         {
             {1, 0, 0, 0},
-            {0, cos(x), -sin(x), 0},
-            {0, sin(x), cos(x), 0},
+            {0, cx, -sx, 0},
+            {0, sx, cx, 0},
             {0, 0, 0, 1}
         }
     };
@@ -224,11 +232,13 @@ mat4 m4_rotatex(float x) {
 
 
 mat4 m4_rotatey(float y) {
+    float cy = cos(y);
+    float sy = sin(y);
     mat4 m = {
         {
-            {cos(y), 0, sin(y), 0},
+            {cy, 0, sy, 0},
             {0, 1, 0, 0},
-            {-sin(y), 0, cos(y), 0},
+            {-sy, 0, cy, 0},
             {0, 0, 0, 1}
         }
     };
@@ -238,10 +248,12 @@ mat4 m4_rotatey(float y) {
 
 
 mat4 m4_rotatez(float z) {
+    float cz = cos(z);
+    float sz = sin(z);
     mat4 m = {
         {
-            {cos(z), -sin(z), 0, 0},
-            {sin(z), cos(z), 0, 0},
+            {cz, -sz, 0, 0},
+            {sz, cz, 0, 0},
             {0, 0, 1, 0},
             {0, 0, 0, 1}
         }

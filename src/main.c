@@ -5,6 +5,7 @@
 #include "game.h"
 #include "config.h"
 #include "almath.h"
+#include "shader.h"
 
 
 Game* dwarves;
@@ -39,6 +40,7 @@ int main() {
 
     mat4 view = m4_orthographic(near, far, top, bottom, left, right);
     m4_print(&view);
+    GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
 
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
@@ -61,9 +63,15 @@ int main() {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glUseProgram(program);
+
+
+        glUseProgram(0);
 
         SDL_GL_SwapWindow(dwarves->window);
     }
+
+    glDeleteProgram(program);
 
     return EXIT_SUCCESS;
 }

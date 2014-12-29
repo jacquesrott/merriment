@@ -32,6 +32,16 @@ int main() {
 
     dwarves = game_create(width, height);
 
+    float far = 1000.0,
+          near = 0.1,
+          left = -width / 2.0,
+          right = width / 2.0,
+          top = height / 2.0,
+          bottom = -height / 2.0;
+
+    mat4 view = m4_orthographic(near, far, top, bottom, left, right);
+    m4_print(&view);
+
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
         frame_time = current_time - dwarves->last_time;

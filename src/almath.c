@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 
 #include "almath.h"
 
@@ -197,6 +198,19 @@ mat4 m4_translate(const vec3* v) {
 }
 
 
+mat4 m4_orthographic(float near, float far, float top, float bottom, float left, float right) {
+    mat4 m = {
+        {
+            {2.0 / (right - left), 0, 0, -( (right + left) / (right - left) )},
+            {0, 2.0 / (top - bottom), 0, -( (top + bottom) / (top - bottom) )},
+            {0, 0, -2.0 / (far - near), (far + near) / (far - near)},
+            {0, 0, 0, 1.0}
+        }
+    };
+    return m;
+}
+
+
 mat4 m4_rotate(const vec3* v) {
     float cx = cos(v->x);
     float sx = sin(v->x);
@@ -304,4 +318,13 @@ mat4* m4_x_m4(mat4* out, const mat4* a, const mat4* b) {
     out->rows[3].w = a->rows[3].x*b->rows[0].w + a->rows[3].y*b->rows[1].w + a->rows[3].z*b->rows[2].w + a->rows[3].w*b->rows[3].w;
 
     return out;
+}
+
+
+void m4_print(const mat4* m) {
+    int i;
+    for(i = 0; i < 4; i++) {
+        printf("[ %f\t%f\t%f\t%f ]\n", m->rows[i].x, m->rows[i].y, m->rows[i].z, m->rows[i].w);
+    }
+    printf("\n");
 }

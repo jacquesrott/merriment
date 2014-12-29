@@ -41,3 +41,11 @@ Game* game_create(int width, int height) {
     return game;
 }
 
+
+void game_destroy(Game* game) {
+    if(game->window) {
+        SDL_GL_DeleteContext(game->gl);
+        SDL_DestroyWindow(game->window);
+    }
+    free(game);
+}

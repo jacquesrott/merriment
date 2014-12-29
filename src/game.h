@@ -16,5 +16,6 @@ typedef struct {
 
 void print_error(const char* message);
 Game* game_create(int width, int height);
+void game_destroy(Game* game);
 
 #endif

@@ -6,15 +6,13 @@
 #include "config.h"
 #include "almath.h"
 
+
 Game* dwarves;
 
+
 void quit_dwarves() {
-    if(dwarves->window) {
-        SDL_GL_DeleteContext(dwarves->gl);
-        SDL_DestroyWindow(dwarves->window);
-    }
+    game_destroy(dwarves);
     SDL_Quit();
-    free(dwarves);
     printf("Quitting Dwarves.\n");
 }
 

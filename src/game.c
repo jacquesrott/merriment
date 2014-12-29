@@ -11,6 +11,13 @@ void print_error(const char* message) {
 
 
 Game* game_create(int width, int height) {
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, DW_OPENGL_MAJOR_VERSION);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, DW_OPENGL_MINOR_VERSION);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, DW_DOUBLEBUFFER);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, DW_DEPTH_SIZE);
+
     Game* game = malloc(sizeof(*game));
 
     game->width = width;
@@ -29,14 +36,11 @@ Game* game_create(int width, int height) {
 
     game->gl = SDL_GL_CreateContext(game->window);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, DW_OPENGL_MAJOR_VERSION);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, DW_OPENGL_MINOR_VERSION);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, DW_DOUBLEBUFFER);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, DW_DEPTH_SIZE);
-
     game->last_time = SDL_GetTicks();
+
+    printf("GL version: %s - GLSL version: %s\n",
+            glGetString(GL_VERSION),
+            glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     return game;
 }

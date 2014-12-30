@@ -35,8 +35,12 @@ Game* game_create(int width, int height) {
     }
 
     game->gl = SDL_GL_CreateContext(game->window);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     game->last_time = SDL_GetTicks();
+
+    glClearColor(1, 1, 1, 1);
 
     printf("GL version: %s - GLSL version: %s\n",
             glGetString(GL_VERSION),

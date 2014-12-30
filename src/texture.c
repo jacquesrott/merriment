@@ -1,0 +1,55 @@
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <OpenGL/gl3.h>
+#include "texture.h"
+
+
+void texture_bind(GLuint id) {
+    glBindTexture(GL_TEXTURE_2D, id);
+}
+
+
+void texture_unbind() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+void texture_destroy(GLuint id) {
+    glDeleteTextures(1, &id);
+}
+
+
+GLuint texture_load(const char* path) {
+    GLuint id;
+    glGenTextures(1, &id);
+
+    SDL_Surface *texture;
+    texture = IMG_Load(path);
+
+    if(texture == NULL) {
+        return id;
+    }
+
+    texture_bind(id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0, GL_RGBA,
+        texture->w, texture->h,
+        0, GL_BGRA,
+        GL_UNSIGNED_BYTE, 
+        texture->pixels
+    );
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    SDL_FreeSurface(texture);
+
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Texture \"%s\" loaded.\n", path);
+
+    return id;
+}

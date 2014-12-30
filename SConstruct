@@ -49,6 +49,9 @@ env = Environment(
 env.Append(CCFLAGS = ['-Wall', '-Werror'])
 env.Append(LIBPATH = ['/usr/local/lib/'])
 env.Append(LINKFLAGS = [
-    '-framework', 'SDL2', '-framework', 'OpenGL', '-framework', 'Cocoa'])
-t = env.Program(target="bin/dwarves", source=["build/main.c", "build/almath.c", "build/game.c", "build/shader.c"])
+    '-framework', 'SDL2',
+    '-framework', 'SDL2_image',
+    '-framework', 'OpenGL',
+    '-framework', 'Cocoa'])
+t = env.Program(target="bin/dwarves", source=["build/main.c", "build/almath.c", "build/game.c", "build/shader.c", "build/texture.c"])
 Default(t)

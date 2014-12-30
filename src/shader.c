@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <OpenGL/GL3.h>
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -47,6 +48,8 @@ GLuint shader_load(const char* path, GLenum type) {
         printf("\"%s\" - %s\n", path, shader_error);
     }
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Shader \"%s\" loaded.\n", path);
+
     return id;
 }
 
@@ -75,4 +78,19 @@ GLuint program_load(const char* vertex_path, const char* fragment_path) {
     glDeleteShader(fragment_shader);
 
     return program;
+}
+
+
+void program_bind(GLuint id) {
+    glUseProgram(id);
+}
+
+
+void program_unbind() {
+    glUseProgram(0);
+}
+
+
+void program_destroy(GLuint id) {
+    glDeleteProgram(id);
 }

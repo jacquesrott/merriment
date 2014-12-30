@@ -63,15 +63,15 @@ int main() {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glUseProgram(program);
 
+        program_bind(program);
 
-        glUseProgram(0);
+        program_unbind();
 
         SDL_GL_SwapWindow(dwarves->window);
     }
 
-    glDeleteProgram(program);
+    program_destroy(program);
 
     return EXIT_SUCCESS;
 }

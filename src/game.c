@@ -41,6 +41,8 @@ Game* game_create(int width, int height) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glEnable(GL_CULL_FACE);
+
     game->last_time = SDL_GetTicks();
 
     glClearColor(1, 1, 1, 1);

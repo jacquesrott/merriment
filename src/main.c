@@ -53,6 +53,8 @@ int main() {
     GLuint umatrix_id = glGetUniformLocation(program, "MVP");
     GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
 
+    int ja = 0;
+
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
         frame_time = current_time - dwarves->last_time;
@@ -64,12 +66,30 @@ int main() {
                 case SDL_QUIT:
                     dwarves->run = 1;
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    switch (dwarves->event.button.button)
+                    {
+                        case SDL_BUTTON_LEFT:
+                            sprite->transform = m4_identity();
+                            break;
+                        default:
+                            ja++;
+                            break;
+                    }
+                    break;
                 default:
                     break;
             }
         }
 
         while(accumulator >= DW_DELTA_TIME) {
+            if(ja % 2 == 0) {
+                mat4 rot = m4_rotatez(0.2);
+                mat4 out;
+                m4_x_m4(&out, &rot, &sprite->transform);
+                sprite->transform = out;
+                ja = 1;
+            }
             accumulator -= DW_DELTA_TIME;
         }
 

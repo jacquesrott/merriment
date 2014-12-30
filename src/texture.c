@@ -19,6 +19,15 @@ void texture_destroy(GLuint id) {
 }
 
 
+int texture_get_param(GLuint texture, GLenum param) {
+    int value;
+    texture_bind(texture);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, param, &value);
+    texture_unbind();
+    return value;
+}
+
+
 GLuint texture_load(const char* path) {
     GLuint id;
     glGenTextures(1, &id);

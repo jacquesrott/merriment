@@ -7,6 +7,7 @@
 #include "almath.h"
 #include "shader.h"
 #include "texture.h"
+#include "buffer.h"
 #include "sprite.h"
 
 
@@ -47,8 +48,10 @@ int main() {
     mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
     m4_print(&view);
     GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
-    GLuint texture = texture_load("assets/red_square.png");
-    Sprite* sprite = sprite_create(texture);
+    Sprite* sprite = sprite_create("assets/red_square.png");
+
+    GLuint umatrix_id = glGetUniformLocation(program, "MVP");
+    GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
 
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
@@ -73,10 +76,10 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         program_bind(program);
-        texture_bind(texture);
 
-        sprite_draw(sprite);
+        sprite_draw(sprite, &view, umatrix_id, utexture_id);
 
+        buffer_unbind();
         texture_unbind();
         program_unbind();
 
@@ -85,7 +88,6 @@ int main() {
 
     program_destroy(program);
     glDeleteVertexArrays(1, &vao_id);
-    texture_destroy(texture);
     sprite_destroy(sprite);
 
     return EXIT_SUCCESS;

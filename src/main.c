@@ -33,8 +33,8 @@ int main() {
 
     dwarves = game_create(width, height);
 
-    float far = 1000.0,
-          near = 0.1,
+    float near = -1.0,
+          far = 1.0,
           left = -width / 2.0,
           right = width / 2.0,
           top = height / 2.0,
@@ -44,7 +44,7 @@ int main() {
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
 
-    mat4 view = m4_orthographic(near, far, top, bottom, left, right);
+    mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
     m4_print(&view);
     GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
     GLuint texture = texture_load("assets/red_square.png");

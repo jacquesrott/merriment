@@ -60,7 +60,8 @@ mat4 m4_identity();
 mat4 m4_scalef(float i);
 mat4 m4_scale(const vec3* v);
 mat4 m4_translate(const vec3* v);
-mat4 m4_orthographic(float near, float far, float top, float bottom, float left, float right);
+mat4 m4_ortho3d(float near, float far, float top, float bottom, float left, float right);
+mat4 m4_ortho2d(float top, float bottom, float left, float right);
 
 mat4 m4_rotate(const vec3* v);
 mat4 m4_rotatex(float x);

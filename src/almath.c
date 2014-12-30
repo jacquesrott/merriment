@@ -239,12 +239,25 @@ mat4 m4_translate(const vec3* v) {
 }
 
 
-mat4 m4_orthographic(float near, float far, float top, float bottom, float left, float right) {
+mat4 m4_ortho3d(float near, float far, float top, float bottom, float left, float right) {
     mat4 m = {
         {
-            {2.0 / (right - left), 0, 0, -( (right + left) / (right - left) )},
-            {0, 2.0 / (top - bottom), 0, -( (top + bottom) / (top - bottom) )},
-            {0, 0, -2.0 / (far - near), (far + near) / (far - near)},
+            {2.0 / (right-left), 0, 0, -((right+left) / (right-left))},
+            {0, 2.0 / (bottom-top), 0, -((bottom+top) / (bottom-top))},
+            {0, 0, -2.0 / (far-near), -((far+near) / (far-near))},
+            {0, 0, 0, 1.0}
+        }
+    };
+    return m;
+}
+
+
+mat4 m4_ortho2d(float top, float bottom, float left, float right) {
+    mat4 m = {
+        {
+            {2.0 / (right-left), 0, 0, -((right+left) / (right-left))},
+            {0, 2.0 / (bottom-top), 0, -((bottom+top) / (bottom-top))},
+            {0, 0, -1.0, 0},
             {0, 0, 0, 1.0}
         }
     };

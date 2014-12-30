@@ -48,6 +48,12 @@ vec2* v2_scale(vec2* out, const vec2* a, const vec2* b) {
 }
 
 
+void v2_print(const vec2* v) {
+    printf("[ %f\t%f ]\n", v->x, v->y);
+    printf("\n");
+}
+
+
 // Vec3
 
 
@@ -110,6 +116,11 @@ vec3* v3_scale(vec3* out, const vec3* a, const vec3* b) {
 }
 
 
+void v3_print(const vec3* v) {
+    printf("[ %f\t%f\t%f ]\n", v->x, v->y, v->z);
+    printf("\n");
+}
+
 
 // Vec4
 
@@ -164,6 +175,12 @@ vec4* v4_scale(vec4* out, const vec4* a, const vec4* b) {
     out->z = a->z * b->z;
     out->w = a->w * b->w;
     return out;
+}
+
+
+void v4_print(const vec4* v) {
+    printf("[ %f\t%f\t%f\t%f ]\n", v->x, v->y, v->z, v->w);
+    printf("\n");
 }
 
 
@@ -348,7 +365,7 @@ mat4* m4_x_m4(mat4* out, const mat4* a, const mat4* b) {
 void m4_print(const mat4* m) {
     int i;
     for(i = 0; i < 4; i++) {
-        printf("[ %f\t%f\t%f\t%f ]\n", m->rows[i].x, m->rows[i].y, m->rows[i].z, m->rows[i].w);
+        v4_print(&m->rows[i]);
     }
     printf("\n");
 }

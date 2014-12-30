@@ -41,11 +41,6 @@ GLuint texture_load(const char* path) {
 
     texture_bind(id);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
     glTexImage2D(
         GL_TEXTURE_2D,
         0, GL_RGBA,
@@ -55,7 +50,13 @@ GLuint texture_load(const char* path) {
         texture->pixels
     );
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    texture_unbind();
     SDL_FreeSurface(texture);
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Texture \"%s\" loaded.\n", path);

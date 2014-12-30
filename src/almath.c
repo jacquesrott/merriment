@@ -335,28 +335,28 @@ vec4* m4_x_v4(vec4* out, const mat4* m, const vec4* v) {
 
 
 mat4* m4_x_m4(mat4* out, const mat4* a, const mat4* b) {
-    out->rows[0].x = a->rows[0].x*b->rows[0].x + a->rows[0].y*b->rows[1].x + a->rows[0].z*b->rows[2].x + a->rows[0].w*b->rows[3].x;
-    out->rows[0].y = a->rows[0].x*b->rows[0].y + a->rows[0].y*b->rows[1].y + a->rows[0].z*b->rows[2].y + a->rows[0].w*b->rows[3].y;
-    out->rows[0].z = a->rows[0].x*b->rows[0].z + a->rows[0].y*b->rows[1].z + a->rows[0].z*b->rows[2].z + a->rows[0].w*b->rows[3].z;
-    out->rows[0].w = a->rows[0].x*b->rows[0].w + a->rows[0].y*b->rows[1].w + a->rows[0].z*b->rows[2].w + a->rows[0].w*b->rows[3].w;
+    out->rows[0].x = b->rows[0].x*a->rows[0].x + b->rows[0].y*a->rows[1].x + b->rows[0].z*a->rows[2].x + b->rows[0].w*a->rows[3].x;
+    out->rows[0].y = b->rows[0].x*a->rows[0].y + b->rows[0].y*a->rows[1].y + b->rows[0].z*a->rows[2].y + b->rows[0].w*a->rows[3].y;
+    out->rows[0].z = b->rows[0].x*a->rows[0].z + b->rows[0].y*a->rows[1].z + b->rows[0].z*a->rows[2].z + b->rows[0].w*a->rows[3].z;
+    out->rows[0].w = b->rows[0].x*a->rows[0].w + b->rows[0].y*a->rows[1].w + b->rows[0].z*a->rows[2].w + b->rows[0].w*a->rows[3].w;
 
 
-    out->rows[1].x = a->rows[1].x*b->rows[0].x + a->rows[1].y*b->rows[1].x + a->rows[1].z*b->rows[2].x + a->rows[1].w*b->rows[3].x;
-    out->rows[1].y = a->rows[1].x*b->rows[0].y + a->rows[1].y*b->rows[1].y + a->rows[1].z*b->rows[2].y + a->rows[1].w*b->rows[3].y;
-    out->rows[1].z = a->rows[1].x*b->rows[0].z + a->rows[1].y*b->rows[1].z + a->rows[1].z*b->rows[2].z + a->rows[1].w*b->rows[3].z;
-    out->rows[1].w = a->rows[1].x*b->rows[0].w + a->rows[1].y*b->rows[1].w + a->rows[1].z*b->rows[2].w + a->rows[1].w*b->rows[3].w;
+    out->rows[1].x = b->rows[1].x*a->rows[0].x + b->rows[1].y*a->rows[1].x + b->rows[1].z*a->rows[2].x + b->rows[1].w*a->rows[3].x;
+    out->rows[1].y = b->rows[1].x*a->rows[0].y + b->rows[1].y*a->rows[1].y + b->rows[1].z*a->rows[2].y + b->rows[1].w*a->rows[3].y;
+    out->rows[1].z = b->rows[1].x*a->rows[0].z + b->rows[1].y*a->rows[1].z + b->rows[1].z*a->rows[2].z + b->rows[1].w*a->rows[3].z;
+    out->rows[1].w = b->rows[1].x*a->rows[0].w + b->rows[1].y*a->rows[1].w + b->rows[1].z*a->rows[2].w + b->rows[1].w*a->rows[3].w;
 
 
-    out->rows[2].x = a->rows[2].x*b->rows[0].x + a->rows[2].y*b->rows[1].x + a->rows[2].z*b->rows[2].x + a->rows[2].w*b->rows[3].x;
-    out->rows[2].y = a->rows[2].x*b->rows[0].y + a->rows[2].y*b->rows[1].y + a->rows[2].z*b->rows[2].y + a->rows[2].w*b->rows[3].y;
-    out->rows[2].z = a->rows[2].x*b->rows[0].z + a->rows[2].y*b->rows[1].z + a->rows[2].z*b->rows[2].z + a->rows[2].w*b->rows[3].z;
-    out->rows[2].w = a->rows[2].x*b->rows[0].w + a->rows[2].y*b->rows[1].w + a->rows[2].z*b->rows[2].w + a->rows[2].w*b->rows[3].w;
+    out->rows[2].x = b->rows[2].x*a->rows[0].x + b->rows[2].y*a->rows[1].x + b->rows[2].z*a->rows[2].x + b->rows[2].w*a->rows[3].x;
+    out->rows[2].y = b->rows[2].x*a->rows[0].y + b->rows[2].y*a->rows[1].y + b->rows[2].z*a->rows[2].y + b->rows[2].w*a->rows[3].y;
+    out->rows[2].z = b->rows[2].x*a->rows[0].z + b->rows[2].y*a->rows[1].z + b->rows[2].z*a->rows[2].z + b->rows[2].w*a->rows[3].z;
+    out->rows[2].w = b->rows[2].x*a->rows[0].w + b->rows[2].y*a->rows[1].w + b->rows[2].z*a->rows[2].w + b->rows[2].w*a->rows[3].w;
 
 
-    out->rows[3].x = a->rows[3].x*b->rows[0].x + a->rows[3].y*b->rows[1].x + a->rows[3].z*b->rows[2].x + a->rows[3].w*b->rows[3].x;
-    out->rows[3].y = a->rows[3].x*b->rows[0].y + a->rows[3].y*b->rows[1].y + a->rows[3].z*b->rows[2].y + a->rows[3].w*b->rows[3].y;
-    out->rows[3].z = a->rows[3].x*b->rows[0].z + a->rows[3].y*b->rows[1].z + a->rows[3].z*b->rows[2].z + a->rows[3].w*b->rows[3].z;
-    out->rows[3].w = a->rows[3].x*b->rows[0].w + a->rows[3].y*b->rows[1].w + a->rows[3].z*b->rows[2].w + a->rows[3].w*b->rows[3].w;
+    out->rows[3].x = b->rows[3].x*a->rows[0].x + b->rows[3].y*a->rows[1].x + b->rows[3].z*a->rows[2].x + b->rows[3].w*a->rows[3].x;
+    out->rows[3].y = b->rows[3].x*a->rows[0].y + b->rows[3].y*a->rows[1].y + b->rows[3].z*a->rows[2].y + b->rows[3].w*a->rows[3].y;
+    out->rows[3].z = b->rows[3].x*a->rows[0].z + b->rows[3].y*a->rows[1].z + b->rows[3].z*a->rows[2].z + b->rows[3].w*a->rows[3].z;
+    out->rows[3].w = b->rows[3].x*a->rows[0].w + b->rows[3].y*a->rows[1].w + b->rows[3].z*a->rows[2].w + b->rows[3].w*a->rows[3].w;
 
     return out;
 }

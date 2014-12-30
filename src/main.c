@@ -6,6 +6,7 @@
 #include "config.h"
 #include "almath.h"
 #include "shader.h"
+#include "texture.h"
 
 
 Game* dwarves;
@@ -41,6 +42,7 @@ int main() {
     mat4 view = m4_orthographic(near, far, top, bottom, left, right);
     m4_print(&view);
     GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
+    GLuint texture = texture_load("assets/red_square.png");
 
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
@@ -65,13 +67,16 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         program_bind(program);
+        texture_bind(texture);
 
+        texture_unbind();
         program_unbind();
 
         SDL_GL_SwapWindow(dwarves->window);
     }
 
     program_destroy(program);
+    texture_destroy(texture);
 
     return EXIT_SUCCESS;
 }

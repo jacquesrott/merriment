@@ -41,6 +41,13 @@ vec2* v2_dot_v2(vec2* out, const vec2* a, const vec2* b) {
 }
 
 
+vec2* v2_scale(vec2* out, const vec2* a, const vec2* b) {
+    out->x = a->x * b->x;
+    out->y = a->y * b->y;
+    return out;
+}
+
+
 // Vec3
 
 
@@ -95,6 +102,14 @@ vec4 v3_to_v4(const vec3* v) {
 }
 
 
+vec3* v3_scale(vec3* out, const vec3* a, const vec3* b) {
+    out->x = a->x * b->x;
+    out->y = a->y * b->y;
+    out->z = a->z * b->z;
+    return out;
+}
+
+
 
 // Vec4
 
@@ -139,6 +154,15 @@ vec4* v4_dot_v4(vec4* out, const vec4* a, const vec4* b) {
     out->y = a->x * b->y + a->y * b->y + a->z * b->y + a->w * b->y;
     out->z = a->x * b->z + a->y * b->z + a->z * b->z + a->w * b->z;
     out->w = a->x * b->w + a->y * b->w + a->z * b->w + a->w * b->w;
+    return out;
+}
+
+
+vec4* v4_scale(vec4* out, const vec4* a, const vec4* b) {
+    out->x = a->x * b->x;
+    out->y = a->y * b->y;
+    out->z = a->z * b->z;
+    out->w = a->w * b->w;
     return out;
 }
 

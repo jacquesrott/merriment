@@ -3,10 +3,15 @@
 
 #include <OpenGL/gl3.h>
 
+#define NB_VERTEX_ATTRIB 2
+
 typedef struct {
     GLuint texture;
-    GLuint buffer;
     int width, height;
+    struct VertexAttrib {
+        GLuint buffer;
+        int size;
+    } attributes[NB_VERTEX_ATTRIB];
 } Sprite;
 
 

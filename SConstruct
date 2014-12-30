@@ -53,5 +53,5 @@ env.Append(LINKFLAGS = [
     '-framework', 'SDL2_image',
     '-framework', 'OpenGL',
     '-framework', 'Cocoa'])
-t = env.Program(target="bin/dwarves", source=["build/main.c", "build/almath.c", "build/game.c", "build/shader.c", "build/texture.c", "build/sprite.c"])
+t = env.Program(target="bin/dwarves", source=["build/main.c", "build/almath.c", "build/game.c", "build/shader.c", "build/texture.c", "build/sprite.c", "build/buffer.c"])
 Default(t)

@@ -3,6 +3,7 @@
 #include "sprite.h"
 #include "almath.h"
 #include "texture.h"
+#include "buffer.h"
 
 const int num_vertices = 6;
 const vec3 quad_vertices[num_vertices] = {
@@ -14,20 +15,6 @@ const vec3 quad_vertices[num_vertices] = {
     {1, 1, 0},
 };
 
-
-void buffer_bind(GLuint buffer) {
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-}
-
-
-void buffer_unbind() {
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-
-void buffer_destroy(GLuint buffer) {
-    glDeleteBuffers(1, &buffer);
-}
 
 
 Sprite* sprite_create(GLuint texture) {
@@ -47,10 +34,11 @@ Sprite* sprite_create(GLuint texture) {
     for(i = 0; i < num_vertices; ++i) {
         v3_scale(&vertices[i], &quad_vertices[i], &scale);
     }
-    glGenBuffers(1, &sprite->buffer);
-    buffer_bind(sprite->buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    buffer_unbind();
+
+    sprite->attributes[0].buffer = buffer_create(&vertices, sizeof(vertices));
+    sprite->attributes[0].size = 3;
+    sprite->attributes[1].buffer = buffer_create(&quad_uv, sizeof(quad_uv));
+    sprite->attributes[1].size = 2;
 
     return sprite;
 }
@@ -60,16 +48,25 @@ void sprite_draw(Sprite* sprite) {
     glEnableVertexAttribArray(0);
     buffer_bind(sprite->buffer);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    int i;
+    for(i = 0; i < NB_VERTEX_ATTRIB; ++i) {
+        glEnableVertexAttribArray(i);
+        buffer_bind(sprite->attributes[i].buffer);
+        glVertexAttribPointer(i, sprite->attributes[i].size, GL_FLOAT, GL_FALSE, 0, NULL);
+    }
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
-    glDisableVertexAttribArray(0);
-    buffer_unbind();
+    for(i = 0; i < NB_VERTEX_ATTRIB; ++i) {
+        glDisableVertexAttribArray(i);
+    }
 }
 
 
 void sprite_destroy(Sprite* sprite) {
-    buffer_destroy(sprite->buffer);
+    int i;
+    for(i = 0; i < NB_VERTEX_ATTRIB; ++i) {
+        buffer_destroy(sprite->attributes[i].buffer);
+    }
     free(sprite);
 }

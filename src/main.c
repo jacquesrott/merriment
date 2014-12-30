@@ -7,6 +7,7 @@
 #include "almath.h"
 #include "shader.h"
 #include "texture.h"
+#include "sprite.h"
 
 
 Game* dwarves;
@@ -39,10 +40,15 @@ int main() {
           top = height / 2.0,
           bottom = -height / 2.0;
 
+    GLuint vao_id;
+    glGenVertexArrays(1, &vao_id);
+    glBindVertexArray(vao_id);
+
     mat4 view = m4_orthographic(near, far, top, bottom, left, right);
     m4_print(&view);
     GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
     GLuint texture = texture_load("assets/red_square.png");
+    Sprite* sprite = sprite_create(texture);
 
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
@@ -69,6 +75,8 @@ int main() {
         program_bind(program);
         texture_bind(texture);
 
+        sprite_draw(sprite);
+
         texture_unbind();
         program_unbind();
 
@@ -76,7 +84,9 @@ int main() {
     }
 
     program_destroy(program);
+    glDeleteVertexArrays(1, &vao_id);
     texture_destroy(texture);
+    sprite_destroy(sprite);
 
     return EXIT_SUCCESS;
 }

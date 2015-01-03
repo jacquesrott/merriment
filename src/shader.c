@@ -22,7 +22,7 @@ GLuint shader_load(const char* path, GLenum type) {
 
     FILE* file = fopen(path, "r");
     if(file == NULL) {
-        printf("Failed to open %s. ERROR: %d\n", path, errno);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to open %s. ERROR: %d\n", path, errno);
         return -1;
     }
 
@@ -45,7 +45,7 @@ GLuint shader_load(const char* path, GLenum type) {
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_length);
         char shader_error[log_length];
         glGetShaderInfoLog(id, log_length, NULL, (GLchar*) &shader_error);
-        printf("\"%s\" - %s\n", path, shader_error);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "\"%s\" - %s\n", path, shader_error);
     }
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Shader \"%s\" loaded.\n", path);
@@ -71,7 +71,7 @@ GLuint program_load(const char* vertex_path, const char* fragment_path) {
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
         char program_error[log_length];
         glGetProgramInfoLog(program, log_length, NULL, (GLchar*) &program_error);
-        printf("%s\n", program_error);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s\n", program_error);
     }
 
     glDeleteShader(vertex_shader);

@@ -1,6 +1,8 @@
 import sys
 import os
 
+TEST_TARGET = "test"
+
 colors = {}
 colors['cyan']   = '\033[96m'
 colors['purple'] = '\033[95m'
@@ -34,7 +36,6 @@ link_shared_library_message = '%sLinking Shared Library %s==> %s$TARGET%s' % \
    (colors['red'], colors['purple'], colors['yellow'], colors['end'])
 
 
-VariantDir('build', 'src', duplicate=0)
 env = Environment(
   CXXCOMSTR = compile_source_message,
   CCCOMSTR = compile_source_message,
@@ -45,13 +46,38 @@ env = Environment(
   SHLINKCOMSTR = link_shared_library_message,
   LINKCOMSTR = link_program_message,
 )
+env.VariantDir('build', 'src')
 
-env.Append(CCFLAGS = ['-Wall', '-Werror'])
-env.Append(LIBPATH = ['/usr/local/lib/'])
-env.Append(LINKFLAGS = [
+env.Append(CCFLAGS=[
+    '-Wall',
+    '-Werror',
+    '-fcolor-diagnostics',
+])
+env.Append(LIBPATH=['/usr/local/lib/'])
+env.Append(LINKFLAGS=[
     '-framework', 'SDL2',
     '-framework', 'SDL2_image',
     '-framework', 'OpenGL',
-    '-framework', 'Cocoa'])
-t = env.Program(target="bin/dwarves", source=["build/main.c", "build/almath.c", "build/game.c", "build/shader.c", "build/texture.c", "build/sprite.c", "build/buffer.c"])
-Default(t)
+    '-framework', 'Cocoa',
+])
+
+sources = env.Glob('build/*.c')
+
+if TEST_TARGET in COMMAND_LINE_TARGETS:
+    env.Append(CPPPATH=["lib/sput-1.3.0"])
+    sources += env.Glob("build/test/main.c")
+    sources = [s for s in sources if s.path != "build/main.c"]
+    tt = env.Program(
+        "bin/test-dwarves",
+        source=sources,
+    )
+    test_alias = Alias(
+        TEST_TARGET,
+        [tt],
+        tt[0].abspath
+    )
+else:
+    dt = env.Program(
+        target="bin/dwarves",
+        source=sources)
+    Default(dt)

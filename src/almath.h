@@ -37,6 +37,7 @@ vec2* v2_x_f(vec2* out, const vec2* v, float f);
 vec2* v2_d_f(vec2* out, const vec2* v, float f);
 vec2* v2_dot_v2(vec2* out, const vec2* a, const vec2* b);
 vec2* v2_scale(vec2* out, const vec2* a, const vec2* b);
+float v2_length(const vec2* v);
 void v2_print(const vec2* v);
 
 vec3* v3_p_v3(vec3* out, const vec3* a, const vec3* b);
@@ -46,6 +47,7 @@ vec3* v3_d_f(vec3* out, const vec3* v, float f);
 vec3* v3_dot_v3(vec3* out, const vec3* a, const vec3* b);
 vec3* v3_scale(vec3* out, const vec3* a, const vec3* b);
 void v3_print(const vec3* v);
+float v3_length(const vec3* v);
 vec4 v3_to_v4(const vec3* v);
 
 vec4* v4_p_v4(vec4* out, const vec4* a, const vec4* b);
@@ -55,6 +57,7 @@ vec4* v4_d_f(vec4* out, const vec4* v, float f);
 vec4* v4_dot_v4(vec4* out, const vec4* a, const vec4* b);
 vec4* v4_scale(vec4* out, const vec4* a, const vec4* b);
 void v4_print(const vec4* v);
+float v4_length(const vec4* v);
 
 mat4 m4_identity();
 mat4 m4_scalef(float i);

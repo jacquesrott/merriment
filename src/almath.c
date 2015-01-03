@@ -54,6 +54,12 @@ void v2_print(const vec2* v) {
 }
 
 
+float v2_length(const vec2* v) {
+    float l = v->x*v->x + v->y*v->y;
+    return sqrt(l);
+}
+
+
 // Vec3
 
 
@@ -122,6 +128,12 @@ void v3_print(const vec3* v) {
 }
 
 
+float v3_length(const vec3* v) {
+    float l = v->x*v->x + v->y*v->y + v->z*v->z;
+    return sqrt(l);
+}
+
+
 // Vec4
 
 vec4* v4_p_v4(vec4* out, const vec4* a, const vec4* b) {
@@ -181,6 +193,12 @@ vec4* v4_scale(vec4* out, const vec4* a, const vec4* b) {
 void v4_print(const vec4* v) {
     printf("[ %f\t%f\t%f\t%f ]\n", v->x, v->y, v->z, v->w);
     printf("\n");
+}
+
+
+float v4_length(const vec4* v) {
+    float l = v->x*v->x + v->y*v->y + v->z*v->z + v->w*v->w;
+    return sqrt(l);
 }
 
 

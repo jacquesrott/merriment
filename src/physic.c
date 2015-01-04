@@ -12,9 +12,9 @@ int v2_in_c2(const vec2* v, const Circle2D* c) {
 
 
 int c2_in_c2(const Circle2D* a, const Circle2D* b) {
+    if(a->radius > b->radius) return 1;
     vec2 dir;
-    dir.x = (a->position.x + a->radius) - (b->position.x + b->radius);
-    dir.y = (a->position.y + a->radius) - (b->position.y + b->radius);
+    v2_m_v2(&dir, &b->position, &a->position);
     float l = v2_length(&dir);
     float r = fabs(b->radius - a->radius);
     return (l <= r) ? 0 : 1;

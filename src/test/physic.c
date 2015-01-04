@@ -54,7 +54,7 @@ void test_physic_circle() {
     sput_fail_unless(result == 0, "c2_collide returns 0 when circle are overlapping and c_a in c_b.");
 
     result = c2_in_c2(&c_b, &c_a);
-    sput_fail_unless(result == 0, "c2_in_c2 returns 0 when checking with inverted query.");
+    sput_fail_unless(result == 1, "c2_in_c2 returns 1 when checking with inverted query.");
 
     result = c2_collide(&c_b, &c_a);
     sput_fail_unless(result == 0, "c2_collide returns 0 when checking with inverted query.");

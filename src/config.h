@@ -7,4 +7,8 @@
 #define DW_DEPTH_SIZE 24
 #define DW_DOUBLEBUFFER 1
 
+
+#define DW_MIN_PLANET_RADIUS 10.0
+#define DW_MAX_PLANET_RADIUS 100.0
+
 #endif

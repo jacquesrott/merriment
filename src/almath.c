@@ -1,4 +1,3 @@
-#include <math.h>
 #include <stdio.h>
 
 #include "almath.h"
@@ -57,6 +56,13 @@ void v2_print(const vec2* v) {
 float v2_length(const vec2* v) {
     float l = v->x*v->x + v->y*v->y;
     return sqrt(l);
+}
+
+
+vec2* v2_polar(vec2* out, float length, float angle) {
+    out->x = fabs(length) * cos(angle);
+    out->y = fabs(length) * sin(angle);
+    return out;
 }
 
 

@@ -1,6 +1,8 @@
 #ifndef DW_MATH_H
 #define DW_MATH_H
 
+#include <math.h>
+
 
 typedef struct {
     float x;
@@ -39,6 +41,7 @@ vec2* v2_dot_v2(vec2* out, const vec2* a, const vec2* b);
 vec2* v2_scale(vec2* out, const vec2* a, const vec2* b);
 float v2_length(const vec2* v);
 void v2_print(const vec2* v);
+vec2* v2_polar(vec2* out, float length, float angle);
 
 vec3* v3_p_v3(vec3* out, const vec3* a, const vec3* b);
 vec3* v3_m_v3(vec3* out, const vec3* a, const vec3* b);
@@ -75,5 +78,8 @@ vec3* m4_x_v3(vec3* out, const mat4* m, const vec3* v);
 vec4* m4_x_v4(vec4* out, const mat4* m, const vec4* v);
 mat4* m4_x_m4(mat4* out, const mat4* a, const mat4* b);
 void m4_print(const mat4* m);
+
+#define deg_to_rad(d) return M_PI * d / 180
+#define rad_to_deg(r) return 180 * r / M_PI
 
 #endif

@@ -1,8 +1,6 @@
 #ifndef DW_PLANET_H
 #define DW_PLANET_H
 
-#include <OpenGL/gl3.h>
-
 #include "almath.h"
 #include "curve.h"
 #include "mesh.h"

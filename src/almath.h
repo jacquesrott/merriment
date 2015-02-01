@@ -79,6 +79,10 @@ vec4* m4_x_v4(vec4* out, const mat4* m, const vec4* v);
 mat4* m4_x_m4(mat4* out, const mat4* a, const mat4* b);
 void m4_print(const mat4* m);
 
+vec2* m4_position2(vec2* out, const mat4* m);
+vec3* m4_position3(vec3* out, const mat4* m);
+vec4* m4_position4(vec4* out, const mat4* m);
+
 #define deg_to_rad(d) (M_PI * d / 180)
 #define rad_to_deg(r) (180 * r / M_PI)
 

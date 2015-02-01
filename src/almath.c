@@ -408,6 +408,30 @@ void m4_print(const mat4* m) {
 }
 
 
+vec2* m4_position2(vec2* out, const mat4* m) {
+    out->x = m->rows[0].z;
+    out->y = m->rows[1].z;
+    return out;
+}
+
+
+vec3* m4_position3(vec3* out, const mat4* m) {
+    out->x = m->rows[0].z;
+    out->y = m->rows[1].z;
+    out->z = m->rows[2].z;
+    return out;
+}
+
+
+vec4* m4_position4(vec4* out, const mat4* m) {
+    out->x = m->rows[0].z;
+    out->y = m->rows[1].z;
+    out->z = m->rows[2].z;
+    out->w = m->rows[3].z;
+    return out;
+}
+
+
 int round_up(int num, int multiple) {
     if(multiple == 0)
         return num;

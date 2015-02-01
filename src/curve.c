@@ -36,63 +36,57 @@ vec2* curve_cubic(vec2* out, const vec2* p0,  const vec2* p1, const vec2* p2, co
 PolyCurve* polycurve_create(int size) {
     PolyCurve* curve = malloc(sizeof(*curve));
     curve->points_length = size;
-    curve->points = malloc(sizeof(vec2*) * size);
+    curve->points = malloc(sizeof(vec2) * size);
     return curve;
 }
 
 void polycurve_destroy(PolyCurve* curve) {
-    int i;
-    for(i = 0 ; i < curve->points_length ; ++i) {
-        free(curve->points[i]);
-    }
+    free(curve->points);
     free(curve);
 }
 
 
-PolyCurve* curve_multiquadratic(vec2** points, int size) {
-    vec2* p0,
-        * p1,
-        * p2;
+PolyCurve* curve_multiquadratic(vec2* points, int size) {
     int i,
         t,
-        last_segment = size - 3,
-        curve_size = (size / 3) * T_MAX_SIZE;
+        t_counter = 0,
+        last_segment = size - 2,
+        curve_size = (size / 2) * T_MAX_SIZE;
 
     PolyCurve* curve = polycurve_create(curve_size);
 
-    for(i = 0 ; i < curve_size ; ++i) {
-        p0 = points[i];
-        p1 = points[i + 1];
-        p2 = (i == last_segment) ? points[0] : points[i + 2];
+    for(i = 0 ; i < size; i += 2) {
+        vec2 *p0 = &points[i];
+        vec2 *p1 = &points[i + 1];
+        vec2 *p2 = (i == last_segment) ? &points[0] : &points[i + 2];
 
-        for(t = 0 ; t <= T_MAX_SIZE ; t += T_SIZE) {
-            curve_quadratic(curve->points[i + t], p0, p1, p2, t);
+        for(t = 0 ; t < T_MAX_SIZE ; t += T_SIZE) {
+            curve_quadratic(&curve->points[t_counter], p0, p1, p2, t);
+            ++t_counter;
         }
     }
     return curve;
 }
 
 
-PolyCurve* curve_multicubic(vec2** points, int size) {
-    vec2* p0,
-        * p1,
-        * p2,
-        * p3;
+PolyCurve* curve_multicubic(vec2* points, int size) {
     int i,
         t,
-        last_segment = size - 4,
-        curve_size = (size / 4) * T_MAX_SIZE;
+        t_counter = 0,
+        last_segment = size - 3,
+        curve_size = (size / 3) * T_MAX_SIZE;
 
     PolyCurve* curve = polycurve_create(curve_size);
 
-    for(i = 0 ; i < curve_size ; ++i) {
-        p0 = points[i];
-        p1 = points[i + 1];
-        p2 = points[i + 2];
-        p3 = (i == last_segment) ? points[0] : points[i + 3];
+    for(i = 0 ; i < size ; ++i) {
+        vec2* p0 = &points[i];
+        vec2* p1 = &points[i + 1];
+        vec2* p2 = &points[i + 2];
+        vec2* p3 = (i == last_segment) ? &points[0] : &points[i + 3];
 
-        for(t = 0 ; t <= T_MAX_SIZE ; t += T_SIZE) {
-            curve_cubic(curve->points[i + t], p0, p1, p2, p3, t);
+        for(t = 0 ; t < T_MAX_SIZE ; t += T_SIZE) {
+            curve_cubic(&curve->points[t_counter], p0, p1, p2, p3, t);
+            ++t_counter;
         }
     }
     return curve;

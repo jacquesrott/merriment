@@ -1,7 +1,7 @@
 #ifndef DW_SPRITE_H
 #define DW_SPRITE_H
 
-#include <OpenGL/gl3.h>
+#include "buffer.h"
 #include "almath.h"
 
 #define NB_VERTEX_ATTRIB 2
@@ -10,10 +10,7 @@ typedef struct {
     GLuint texture;
     int width, height;
     mat4 transform;
-    struct VertexAttrib {
-        GLuint buffer;
-        int size;
-    } attributes[NB_VERTEX_ATTRIB];
+    VertexAttrib attributes[NB_VERTEX_ATTRIB];
 } Sprite;
 
 

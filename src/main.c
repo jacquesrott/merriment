@@ -1,3 +1,4 @@
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <OpenGL/gl3.h>
 
@@ -9,6 +10,7 @@
 #include "texture.h"
 #include "buffer.h"
 #include "sprite.h"
+#include "planet.h"
 
 
 Game* dwarves;
@@ -22,6 +24,8 @@ void quit_dwarves() {
 
 
 int main() {
+    srandom(time(NULL));
+
     int width = 1440, height = 900;
     unsigned int frame_time, current_time, accumulator = 0;
 
@@ -53,6 +57,9 @@ int main() {
     GLuint umatrix_id = glGetUniformLocation(program, "MVP");
     GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
 
+    Planet* planet = planet_create();
+    planet_generate(planet);
+
     int ja = 0;
 
     while(dwarves->run == 0) {
@@ -67,8 +74,7 @@ int main() {
                     dwarves->run = 1;
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    switch (dwarves->event.button.button)
-                    {
+                    switch (dwarves->event.button.button) {
                         case SDL_BUTTON_LEFT:
                             sprite->transform = m4_identity();
                             break;
@@ -98,6 +104,7 @@ int main() {
         program_bind(program);
 
         sprite_draw(sprite, &view, umatrix_id, utexture_id);
+        mesh_draw(planet->mesh, &view, umatrix_id);
 
         buffer_unbind();
         texture_unbind();
@@ -109,6 +116,7 @@ int main() {
     program_destroy(program);
     glDeleteVertexArrays(1, &vao_id);
     sprite_destroy(sprite);
+    planet_destroy(planet);
 
     return EXIT_SUCCESS;
 }

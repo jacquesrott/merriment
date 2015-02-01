@@ -82,4 +82,7 @@ void m4_print(const mat4* m);
 #define deg_to_rad(d) (M_PI * d / 180)
 #define rad_to_deg(r) (180 * r / M_PI)
 
+int round_up(int num, int multiple);
+int round_down(int num, int multiple);
+
 #endif

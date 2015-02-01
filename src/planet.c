@@ -23,22 +23,10 @@ void planet_destroy(Planet* planet) {
 }
 
 
-int round_up(int num, int multiple) {
-    if(multiple == 0)
-        return num;
-    int remain = num % multiple;
-
-    if(remain == 0)
-        return num;
-    return num + multiple - remain;
-}
-
-
-int round_down(int num, int multiple) {
-    if(multiple == 0)
-        return num;
-    int remain = num % multiple;
-    return num - remain;
+void* array_concat(void* out, const void* a, size_t a_size, const void* b, size_t b_size) {
+    memcpy(out, a, a_size);
+    memcpy(out + a_size, b, b_size);
+    return out;
 }
 
 

@@ -406,3 +406,22 @@ void m4_print(const mat4* m) {
     }
     printf("\n");
 }
+
+
+int round_up(int num, int multiple) {
+    if(multiple == 0)
+        return num;
+    int remain = num % multiple;
+
+    if(remain == 0)
+        return num;
+    return num + multiple - remain;
+}
+
+
+int round_down(int num, int multiple) {
+    if(multiple == 0)
+        return num;
+    int remain = num % multiple;
+    return num - remain;
+}

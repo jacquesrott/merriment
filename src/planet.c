@@ -1,6 +1,8 @@
-#include <time.h>
+#include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
+#include "almath.h"
 #include "planet.h"
 #include "random.h"
 #include "config.h"
@@ -8,9 +10,7 @@
 
 Planet* planet_create() {
     Planet* planet = malloc(sizeof(*planet));
-    planet->radius = 0;
-    planet->transform = m4_identity();
-    planet->mesh = mesh_create();
+    planet->radius = 0.0;
 
     return planet;
 }
@@ -32,47 +32,42 @@ void* array_concat(void* out, const void* a, size_t a_size, const void* b, size_
 
 void planet_generate(Planet* planet) {
     int max_points = 360;
-    int size = sizeof(vec2*) * max_points;
     int counter = 0;
-    float angle = 360.0;
+    float angle;
 
-    vec2** points = malloc(size);
-
-    srandom(time(NULL));
+    vec2 points[max_points];
 
     float radius = rand_rangef(DW_MIN_PLANET_RADIUS, DW_MAX_PLANET_RADIUS);
 
-    while(angle > 0.0) {
-        if(counter >= size) {
-            size += sizeof(vec2*) * max_points;
-            points = realloc(points, size);
-        }
+    for(angle = 360.0; angle > 0.0; angle -= rand_rangef(1.0, 2.0)) {
         radius = rand_rangef(DW_MIN_PLANET_RADIUS, DW_MAX_PLANET_RADIUS);
-        angle -= rand_rangef(1.0, 2.0);
 
-        vec2* point = malloc(sizeof(*point));
         float radian_angle = deg_to_rad(angle);
-        v2_polar(point, radius, radian_angle);
-        points[counter] = point;
+        v2_polar(&points[counter], radius, radian_angle);
         ++counter;
     }
 
     counter = round_down(counter, 3);
     planet->curve = curve_multiquadratic(points, counter);
 
-    int indices_size = planet->curve->points_length;
-    vec3** indices = malloc(sizeof(vec3) * indices_size);
+    int indices_size = planet->curve->points_length * 3;
+    unsigned int indices[indices_size];
     int center_index = planet->curve->points_length;
     int i;
-    for(i = 0; i < indices_size; ++i) {
-        vec3* triangle = malloc(sizeof(*triangle));
-        triangle->x = center_index;
-        triangle->y = i;
-        triangle->z = (i == indices_size - 1) ? 0 : i + 1;
-        indices[i] = triangle;
+    for(i = 0; i < indices_size; i += 3) {
+        indices[i] = center_index;
+        indices[i + 1] = i;
+        indices[i + 2] = (i == indices_size - 1) ? 0 : i + 1;
     }
 
-    planet->mesh->buffer = buffer_create(planet->curve->points, planet->curve->points_length);
+    int vertice_size = planet->curve->points_length + 1;
+    vec2 vertices[vertice_size];
+    vec2 center = {0, 0};
 
-    free(points);
+    array_concat(
+        vertices,
+        planet->curve->points, sizeof(vec2) * planet->curve->points_length,
+        &center, sizeof(vec2));
+
+    planet->mesh = mesh_create(planet->curve->points, planet->curve->points_length + 1, indices, indices_size);
 }

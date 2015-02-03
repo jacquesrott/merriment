@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#include "error.h"
 #include "buffer.h"
 
 
@@ -7,6 +9,7 @@ GLuint buffer_create(const void* values, size_t size) {
     glGenBuffers(1, &id);
     buffer_bind(id);
     glBufferData(GL_ARRAY_BUFFER, size, values, GL_STATIC_DRAW);
+    check_gl_errors("bind buffer data");
     buffer_unbind();
 
     return id;
@@ -18,6 +21,7 @@ GLuint indexbuffer_create(const void* values, size_t size) {
     glGenBuffers(1, &id);
     indexbuffer_bind(id);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, values, GL_STATIC_DRAW);
+    check_gl_errors("bind index buffer data");
     indexbuffer_unbind();
 
     return id;

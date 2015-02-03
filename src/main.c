@@ -7,6 +7,7 @@
 #include "config.h"
 #include "almath.h"
 #include "shader.h"
+#include "error.h"
 #include "texture.h"
 #include "buffer.h"
 #include "sprite.h"
@@ -48,6 +49,7 @@ int main() {
     GLuint vao_id;
     glGenVertexArrays(1, &vao_id);
     glBindVertexArray(vao_id);
+    check_gl_errors("VAO creation");
 
     mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
     m4_print(&view);

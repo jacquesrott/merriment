@@ -1,6 +1,8 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "almath.h"
+#include "error.h"
 #include "mesh.h"
 
 
@@ -9,16 +11,17 @@ Mesh* mesh_create(vec2* vertices, int vertices_count, unsigned int* indices, int
     mesh->vertices_count = vertices_count;
     mesh->transform = m4_identity();
 
-    mesh->attributes[0].buffer = indexbuffer_create(&indices, sizeof(unsigned int));
-    mesh->attributes[0].size = indices_count * sizeof(unsigned int);
-    mesh->attributes[1].buffer = buffer_create(&vertices, sizeof(vertices));
-    mesh->attributes[1].size = 3;
+    mesh->index.buffer = indexbuffer_create(indices, indices_count * sizeof(unsigned int));
+    mesh->index.size = indices_count * sizeof(unsigned int);
+    mesh->attributes[0].buffer = buffer_create(vertices, vertices_count * sizeof(vec2));
+    mesh->attributes[0].size = 2;
 
     return mesh;
 }
 
 
 void mesh_destroy(Mesh* mesh) {
+    buffer_destroy(mesh->index.buffer);
     int i;
     for(i = 0; i < MESH_VERTEX_ATTRIB_COUNT; ++i) {
         buffer_destroy(mesh->attributes[i].buffer);
@@ -34,14 +37,17 @@ void mesh_draw(Mesh* mesh, const mat4* view, GLuint umatrix_id) {
     glUniformMatrix4fv(umatrix_id, 1, GL_FALSE, (float*) &mvp);
 
     int i;
-    for(i = 1; i < MESH_VERTEX_ATTRIB_COUNT; ++i) {
+    for(i = 0; i < MESH_VERTEX_ATTRIB_COUNT; ++i) {
         glEnableVertexAttribArray(i);
         buffer_bind(mesh->attributes[i].buffer);
-       glVertexAttribPointer(i, mesh->attributes[i].size, GL_FLOAT, GL_FALSE, 0, NULL);
+        glVertexAttribPointer(i, mesh->attributes[i].size, GL_FLOAT, GL_FALSE, 0, NULL);
     }
+    check_gl_errors("vertex attributes");
 
-    indexbuffer_bind(mesh->attributes[0].buffer);
-    glDrawElements(GL_TRIANGLES, mesh->attributes[0].size, GL_UNSIGNED_SHORT, NULL);
+    indexbuffer_bind(mesh->index.buffer);
+    glDrawElements(GL_POINTS, mesh->index.size, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, mesh->index.size, GL_UNSIGNED_SHORT, 0);
+    check_gl_errors("Draw elements");
 
     for(i = 1; i < MESH_VERTEX_ATTRIB_COUNT; ++i) {
         glDisableVertexAttribArray(i);

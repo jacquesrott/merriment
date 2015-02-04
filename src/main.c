@@ -63,6 +63,7 @@ int main() {
     planet_generate(planet);
 
     int ja = 0;
+    int zoom = 0;
 
     while(dwarves->run == 0) {
         current_time = SDL_GetTicks();
@@ -83,6 +84,33 @@ int main() {
                         default:
                             ja++;
                             break;
+                    }
+                    break;
+                case SDL_KEYUP:
+                    switch (dwarves->event.key.keysym.sym) {
+                        case SDLK_SPACE:
+                            planet_destroy(planet);
+                            planet = planet_create();
+                            planet_generate(planet);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SDL_MOUSEWHEEL:
+                    zoom = abs(dwarves->event.wheel.y);
+                    if(dwarves->event.wheel.y < 0) {
+                        left *= zoom;
+                        right *= zoom;
+                        top *= zoom;
+                        bottom *= zoom;
+                        view = m4_ortho3d(far, near, top, bottom, left, right);
+                    } else if(dwarves->event.wheel.y > 0) {
+                        left /= zoom;
+                        right /= zoom;
+                        top /= zoom;
+                        bottom /= zoom;
+                        view = m4_ortho3d(far, near, top, bottom, left, right);
                     }
                     break;
                 default:

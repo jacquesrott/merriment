@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "curve.h"
@@ -29,8 +30,8 @@ vec2* curve_cubic(vec2* out, const vec2* p0,  const vec2* p1, const vec2* p2, co
 }
 
 
-#define T_MAX_SIZE 10
-#define T_SIZE 1
+#define T_MAX_SIZE 1.0
+#define T_SIZE 0.1
 
 
 PolyCurve* polycurve_create(int size) {
@@ -48,10 +49,10 @@ void polycurve_destroy(PolyCurve* curve) {
 
 PolyCurve* curve_multiquadratic(vec2* points, int size) {
     int i,
-        t,
         t_counter = 0,
         last_segment = size - 2,
-        curve_size = (size / 2) * T_MAX_SIZE;
+        curve_size = (size / 2) * (T_MAX_SIZE / T_SIZE);
+    float t;
 
     PolyCurve* curve = polycurve_create(curve_size);
 
@@ -60,7 +61,7 @@ PolyCurve* curve_multiquadratic(vec2* points, int size) {
         vec2 *p1 = &points[i + 1];
         vec2 *p2 = (i == last_segment) ? &points[0] : &points[i + 2];
 
-        for(t = 0 ; t < T_MAX_SIZE ; t += T_SIZE) {
+        for(t = 0.0 ; t < T_MAX_SIZE ; t += T_SIZE) {
             curve_quadratic(&curve->points[t_counter], p0, p1, p2, t);
             ++t_counter;
         }
@@ -71,10 +72,10 @@ PolyCurve* curve_multiquadratic(vec2* points, int size) {
 
 PolyCurve* curve_multicubic(vec2* points, int size) {
     int i,
-        t,
         t_counter = 0,
         last_segment = size - 3,
-        curve_size = (size / 3) * T_MAX_SIZE;
+        curve_size = (size / 3) * (T_MAX_SIZE / T_SIZE);
+    float t;
 
     PolyCurve* curve = polycurve_create(curve_size);
 

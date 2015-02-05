@@ -53,14 +53,15 @@ void planet_generate(Planet* planet) {
     planet->curve = curve_multiquadratic(points, counter);
 
     int vertice_size = planet->curve->points_length + 1;
-    int indices_size = vertice_size * 3;
+    int indices_size = planet->curve->points_length * 3;
     unsigned int indices[indices_size];
-    int center_index = planet->curve->points_length;
+    int center_index = 0;
     int i;
-    for(i = 0; i < indices_size; i += 3) {
-        indices[i + 2] = (i == indices_size - 1) ? 0 : i + 1;
-        indices[i + 1] = i;
-        indices[i] = center_index;
+    for(i = 0; i < planet->curve->points_length; i++) {
+        int index = i * 3;
+        indices[index] = ((i + 1) == planet->curve->points_length - 1) ? 1 : i + 1;
+        indices[index + 1] = i;
+        indices[index + 2] = center_index;
     }
 
     vec2 vertices[vertice_size];
@@ -68,8 +69,9 @@ void planet_generate(Planet* planet) {
 
     array_concat(
         vertices,
-        planet->curve->points, sizeof(vec2) * planet->curve->points_length,
-        &center, sizeof(vec2));
+        &center, sizeof(vec2),
+        planet->curve->points, sizeof(vec2) * planet->curve->points_length
+    );
 
     planet->mesh = mesh_create(vertices, vertice_size, indices, indices_size);
 }

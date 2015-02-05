@@ -45,7 +45,6 @@ void mesh_draw(Mesh* mesh, const mat4* view, GLuint umatrix_id) {
     check_gl_errors("vertex attributes");
 
     indexbuffer_bind(mesh->index.buffer);
-    glDrawElements(GL_POINTS, mesh->index.size, GL_UNSIGNED_SHORT, 0);
     glDrawElements(GL_TRIANGLES, mesh->index.size, GL_UNSIGNED_SHORT, 0);
     check_gl_errors("Draw elements");
 

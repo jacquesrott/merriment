@@ -37,10 +37,13 @@ void planet_generate(Planet* planet) {
 
     vec2 points[max_points];
 
-    float radius = rand_rangef(DW_MIN_PLANET_RADIUS, DW_MAX_PLANET_RADIUS);
+    float water = rand_rangef(DW_PLANET_MIN_RADIUS, DW_PLANET_MAX_RADIUS),
+          min = water - rand_rangef(0, DW_PLANET_RADIUS_DIFF),
+          max = water + rand_rangef(0, DW_PLANET_RADIUS_DIFF),
+          radius;
 
-    for(angle = 360.0; angle > 0.0; angle -= 2.0) {
-        radius = rand_rangef(DW_MIN_PLANET_RADIUS, DW_MAX_PLANET_RADIUS);
+    for(angle = max_points; angle > 0.0; angle -= 2.0) {
+        radius = rand_rangef(min, max);
 
         float radian_angle = deg_to_rad(angle);
         v2_polar(&points[counter], radius, radian_angle);

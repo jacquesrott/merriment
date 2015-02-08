@@ -79,7 +79,7 @@ PolyCurve* curve_multicubic(vec2* points, int size) {
 
     PolyCurve* curve = polycurve_create(curve_size);
 
-    for(i = 0 ; i < size ; ++i) {
+    for(i = 0 ; i < size ; i += 3) {
         vec2* p0 = &points[i];
         vec2* p1 = &points[i + 1];
         vec2* p2 = &points[i + 2];

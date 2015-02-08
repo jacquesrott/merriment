@@ -50,7 +50,7 @@ void planet_generate(Planet* planet) {
         ++counter;
     }
 
-    planet->curve = curve_multiquadratic(points, counter);
+    planet->curve = curve_multicubic(points, counter);
 
     int vertice_size = planet->curve->points_length + 1;
     int indices_size = planet->curve->points_length * 3;

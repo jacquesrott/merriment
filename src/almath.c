@@ -33,10 +33,8 @@ vec2* v2_d_f(vec2* out, const vec2* v, float f) {
 }
 
 
-vec2* v2_dot_v2(vec2* out, const vec2* a, const vec2* b) {
-    out->x = a->x * b->x + a->y * b->x;
-    out->y = a->x * b->y + a->y * b->y;
-    return out;
+float v2_dot_v2(const vec2* a, const vec2* b) {
+    return a->x * b->x + a->y * b->y;
 }
 
 
@@ -101,11 +99,8 @@ vec3* v3_d_f(vec3* out, const vec3* v, float f) {
 }
 
 
-vec3* v3_dot_v3(vec3* out, const vec3* a, const vec3* b) {
-    out->x = a->x * b->x + a->y * b->x + a->z * b->x;
-    out->y = a->x * b->y + a->y * b->y + a->z * b->y;
-    out->z = a->x * b->z + a->y * b->z + a->z * b->z;
-    return out;
+float v3_dot_v3(const vec3* a, const vec3* b) {
+    return a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
 
@@ -178,12 +173,8 @@ vec4* v4_d_f(vec4* out, const vec4* v, float f) {
 }
 
 
-vec4* v4_dot_v4(vec4* out, const vec4* a, const vec4* b) {
-    out->x = a->x * b->x + a->y * b->x + a->z * b->x + a->w * b->x;
-    out->y = a->x * b->y + a->y * b->y + a->z * b->y + a->w * b->y;
-    out->z = a->x * b->z + a->y * b->z + a->z * b->z + a->w * b->z;
-    out->w = a->x * b->w + a->y * b->w + a->z * b->w + a->w * b->w;
-    return out;
+float v4_dot_v4(const vec4* a, const vec4* b) {
+    return a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
 }
 
 

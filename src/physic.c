@@ -74,5 +74,35 @@ void or2_destroy(ORect2D* or2) {
 }
 
 
-int or2_collide_or2(const ORect2D* or2, const ORect2D* other);
-int or2_collide_c2(const ORect2D* or2, const Circle2D* c);
+int or2_collide_1way(const ORect2D* or2, const ORect2D* other) {
+    int a;
+    for(a = 0; a < 2 ; ++a) {
+        float t = v2_dot_v2(&other->corner[0], &or2->axis[a]),
+              t_min = t,
+              t_max = t;
+        int c;
+        for(c = 1; c < 4 ; ++c) {
+            t = v2_dot_v2(&other->corner[c], &or2->axis[a]);
+            if(t < t_min) {
+                t_min = t;
+            } else if(t > t_max) {
+                t_max = t;
+            }
+        }
+
+        if((t_min > 1 + or2->origin[a]) || (t_max < or2->origin[a])) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+int or2_collide_or2(const ORect2D* or2, const ORect2D* other) {
+    return or2_collide_1way(or2, other) && or2_collide_1way(other, or2);
+}
+
+
+int or2_collide_c2(const ORect2D* or2, const Circle2D* c) {
+    
+}

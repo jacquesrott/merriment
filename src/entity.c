@@ -3,21 +3,22 @@
 
 #include "entity.h"
 
-#include "components/meshcomponent.h"
-#include "components/physiccomponent.h"
-#include "components/spritecomponent.h"
-#include "components/scriptcomponent.h"
-
 
 Entity* entity_create(
-        const PhysicComponent* physic,
-        const SpriteComponent* sprite,
-        const MeshComponent* mesh) {
+        PhysicComponent* physic,
+        SpriteComponent* sprite,
+        MeshComponent* mesh) {
     Entity* entity = malloc(sizeof(*entity));
     entity->scripts_count = 0;
     entity->physic = physic;
     entity->mesh = mesh;
     entity->sprite = sprite;
+
+    entity->position.x = 0;
+    entity->position.y = 0;
+
+    entity->transform = m4_identity();
+    return entity;
 }
 
 
@@ -33,7 +34,7 @@ void entity_destroy(Entity* entity) {
 }
 
 
-void entity_add_script_component(Entity* entity, ScriptComponent* component) {
+void entity_add_script(Entity* entity, ScriptComponent* component) {
     assert(entity->scripts_count < MAX_SCRIPT_COMPONENTS);
     
     entity->scripts[entity->scripts_count] = component;

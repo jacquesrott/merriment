@@ -104,5 +104,5 @@ int or2_collide_or2(const ORect2D* or2, const ORect2D* other) {
 
 
 int or2_collide_c2(const ORect2D* or2, const Circle2D* c) {
-    
+    return 1;    
 }

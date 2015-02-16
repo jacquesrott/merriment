@@ -1,6 +1,7 @@
 #ifndef DW_MESH_H
 #define DW_MESH_H
 
+#include "almath.h"
 #include "buffer.h"
 
 #define MESH_VERTEX_ATTRIB_COUNT 1

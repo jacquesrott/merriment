@@ -1,9 +1,15 @@
 #ifndef DW_PHYSIC_COMPONENT_H
 #define DW_PHYSIC_COMPONENT_H
 
-typedef struct {
+
+typedef struct PhysicComponent PhysicComponent;
+
+#include "../entity.h"
+
+
+struct PhysicComponent {
     Entity* entity;
-} PhysicComponent;
+};
 
 
 PhysicComponent* physiccomponent_create();

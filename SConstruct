@@ -59,6 +59,9 @@ env.Append(LINKFLAGS=[
     '-framework', 'SDL2_image',
     '-framework', 'OpenGL',
     '-framework', 'Cocoa',
+    '-lluajit-5.1', '-lm', '-ldl',
+    '-pagezero_size 10000',
+    '-image_base 100000000',
 ])
 
 sources = env.Glob('build/*.c')

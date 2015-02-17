@@ -10,6 +10,7 @@
 #include "error.h"
 #include "texture.h"
 #include "buffer.h"
+#include "script.h"
 #include "sprite.h"
 #include "planet.h"
 
@@ -61,6 +62,8 @@ int main() {
 
     Planet* planet = planet_create();
     planet_generate(planet);
+
+    script_create();
 
     int ja = 0;
     int zoom = 0;
@@ -147,6 +150,8 @@ int main() {
     glDeleteVertexArrays(1, &vao_id);
     sprite_destroy(sprite);
     planet_destroy(planet);
+
+    script_destroy();
 
     return EXIT_SUCCESS;
 }

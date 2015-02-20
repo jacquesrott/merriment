@@ -10,9 +10,11 @@
 #include "error.h"
 #include "texture.h"
 #include "buffer.h"
-#include "script.h"
 #include "sprite.h"
 #include "planet.h"
+
+#include "entity.h"
+#include "scriptcomponent.h"
 
 
 Game* dwarves;
@@ -63,7 +65,12 @@ int main() {
     Planet* planet = planet_create();
     planet_generate(planet);
 
-    script_create();
+    Entity* entity = entity_create(NULL, NULL, NULL);
+
+    ScriptComponent* script = scriptcomponent_create(entity->L, "assets/scripts/player.lua");
+    scriptcomponent_destroy(script);
+
+    entity_destroy(entity);
 
     int ja = 0;
     int zoom = 0;
@@ -150,8 +157,6 @@ int main() {
     glDeleteVertexArrays(1, &vao_id);
     sprite_destroy(sprite);
     planet_destroy(planet);
-
-    script_destroy();
 
     return EXIT_SUCCESS;
 }

@@ -65,7 +65,6 @@ env.Append(LINKFLAGS=[
 ])
 
 sources = env.Glob('build/*.c')
-sources += env.Glob('build/components/*.c')
 
 if TEST_TARGET in COMMAND_LINE_TARGETS:
     env.Append(CPPPATH=["lib/sput-1.3.0"])

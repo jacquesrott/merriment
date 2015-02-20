@@ -3,20 +3,27 @@
 
 #define MAX_SCRIPT_COMPONENTS 24
 
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
 #include "almath.h"
 
 typedef struct Entity Entity;
 
-#include "components/meshcomponent.h"
-#include "components/physiccomponent.h"
-#include "components/spritecomponent.h"
-#include "components/scriptcomponent.h"
+#include "meshcomponent.h"
+#include "physiccomponent.h"
+#include "spritecomponent.h"
+#include "scriptcomponent.h"
 
 
 struct Entity {
     vec2 position;
     float angle;
     mat4 transform;
+
+    lua_State* L;
+
     PhysicComponent* physic;
     SpriteComponent* sprite;
     MeshComponent* mesh;

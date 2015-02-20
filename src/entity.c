@@ -17,6 +17,9 @@ Entity* entity_create(
     entity->position.x = 0;
     entity->position.y = 0;
 
+    entity->L = luaL_newstate();
+    luaL_openlibs(entity->L);
+
     entity->transform = m4_identity();
     return entity;
 }
@@ -30,6 +33,7 @@ void entity_destroy(Entity* entity) {
     for(i = 0 ; i < entity->scripts_count ; ++i) {
         scriptcomponent_destroy(entity->scripts[i]);
     }
+    lua_close(entity->L);
     free(entity);
 }
 

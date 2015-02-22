@@ -65,7 +65,7 @@ int main() {
     Planet* planet = planet_create();
     planet_generate(planet);
 
-    Entity* entity = entity_create(NULL, NULL, NULL);
+    Entity* entity = entity_create(NULL, NULL, NULL, NULL);
 
     ScriptComponent* script = scriptcomponent_create(entity->L, "assets/scripts/player.lua");
     entity_add_script(entity, script);

@@ -15,14 +15,13 @@ typedef struct Entity Entity;
 #include "components/physic.h"
 #include "components/sprite.h"
 #include "components/script.h"
+#include "components/transform.h"
 
 
 struct Entity {
-    vec2 position;
-    float angle;
-    mat4 transform;
-
     lua_State* L;
+
+    TransformCompoment* transform;
 
     PhysicComponent* physic;
     SpriteComponent* sprite;
@@ -33,6 +32,7 @@ struct Entity {
 
 
 Entity* entity_create(
+        TransformCompoment* transform,
         PhysicComponent* physic,
         SpriteComponent* sprite,
         MeshComponent* mesh);

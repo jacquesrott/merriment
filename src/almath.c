@@ -241,6 +241,19 @@ mat4 m4_scale(const vec3* v) {
 }
 
 
+mat4 m4_translate2(const vec2* v) {
+    mat4 m = {
+        {
+            {1, 0, 0, v->x},
+            {0, 1, 0, v->y},
+            {0, 0, 1, 0},
+            {0, 0, 0, 1}
+        }
+    };
+    return m;
+}
+
+
 mat4 m4_translate(const vec3* v) {
     mat4 m = {
         {

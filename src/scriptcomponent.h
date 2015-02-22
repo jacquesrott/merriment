@@ -13,13 +13,13 @@ typedef struct ScriptComponent ScriptComponent;
 struct ScriptComponent {
     Entity* entity;
     const char* path;
-    struct {
-        const char* name;
-        const char* metatable;
-    } instance;
+    const char* instance;
 };
 
 ScriptComponent* scriptcomponent_create(lua_State* L, const char* path);
+void scriptcomponent_init(ScriptComponent* component, lua_State* L);
+void scriptcomponent_update(ScriptComponent* component, lua_State* L);
+void scriptcomponent_finish(ScriptComponent* component, lua_State* L);
 void scriptcomponent_destroy(ScriptComponent* component);
 
 

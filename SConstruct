@@ -52,6 +52,7 @@ env.Append(CCFLAGS=[
     '-Wall',
     '-Werror',
     '-fcolor-diagnostics',
+    '-I/usr/local/include/luajit-2.0/',
 ])
 env.Append(LIBPATH=['/usr/local/lib/'])
 env.Append(LINKFLAGS=[
@@ -59,9 +60,10 @@ env.Append(LINKFLAGS=[
     '-framework', 'SDL2_image',
     '-framework', 'OpenGL',
     '-framework', 'Cocoa',
-    '-lluajit-5.1', '-lm', '-ldl',
-    '-pagezero_size 10000',
-    '-image_base 100000000',
+    '-Bstatic', '-lluajit-5.1',
+    '-Bdynamic', '-lm', '-ldl',
+    '-pagezero_size', '10000',
+    '-image_base', '100000000',
 ])
 
 sources = env.Glob('build/*.c')

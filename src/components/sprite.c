@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "spritecomponent.h"
+#include "sprite.h"
 
 
 SpriteComponent* spritecomponent_create(Sprite* sprite, GLuint program) {

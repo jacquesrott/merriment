@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "physiccomponent.h"
+#include "physic.h"
 
 
 PhysicComponent* physiccomponent_create() {

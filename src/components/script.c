@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
-#include "scriptcomponent.h"
+#include "script.h"
 
 
 ScriptComponent* scriptcomponent_create(lua_State* L, const char* path) {

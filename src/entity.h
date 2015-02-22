@@ -11,10 +11,10 @@
 
 typedef struct Entity Entity;
 
-#include "components/meshcomponent.h"
-#include "components/physiccomponent.h"
-#include "components/spritecomponent.h"
-#include "components/scriptcomponent.h"
+#include "components/mesh.h"
+#include "components/physic.h"
+#include "components/sprite.h"
+#include "components/script.h"
 
 
 struct Entity {

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "meshcomponent.h"
+#include "mesh.h"
 
 
 MeshComponent* meshcomponent_create(Mesh* mesh, GLuint program) {

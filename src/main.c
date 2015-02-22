@@ -68,9 +68,12 @@ int main() {
     Entity* entity = entity_create(NULL, NULL, NULL);
 
     ScriptComponent* script = scriptcomponent_create(entity->L, "assets/scripts/player.lua");
-    scriptcomponent_destroy(script);
+    entity_add_script(entity, script);
 
-    entity_destroy(entity);
+    int s;
+    for(s = 0 ; s < entity->scripts_count ; ++s) {
+        scriptcomponent_init(script, entity->L);
+    }
 
     int ja = 0;
     int zoom = 0;
@@ -136,8 +139,12 @@ int main() {
                 sprite->transform = out;
                 ja = 1;
             }
+            for(s = 0 ; s < entity->scripts_count ; ++s) {
+                scriptcomponent_update(script, entity->L);
+            }
             accumulator -= DW_DELTA_TIME;
         }
+
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -153,6 +160,11 @@ int main() {
         SDL_GL_SwapWindow(dwarves->window);
     }
 
+    for(s = 0 ; s < entity->scripts_count ; ++s) {
+        scriptcomponent_finish(script, entity->L);
+    }
+
+    entity_destroy(entity);
     program_destroy(program);
     glDeleteVertexArrays(1, &vao_id);
     sprite_destroy(sprite);

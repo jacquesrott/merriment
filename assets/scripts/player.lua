@@ -29,9 +29,6 @@ end
 
 function Player:finish()
     self.life = 0
-
-    -- TODO: delete me
-    self:update()
 end
 
 

@@ -1,12 +1,8 @@
-local gz = require "galaczy"
+local gz = require "assets/scripts/galaczy"
 
 Player = {}
 
 Player.__index = Player
-
-instance = {}
-instance.name = "player"
-instance.metatable = "Player"
 
 
 function Player.create()
@@ -37,3 +33,7 @@ function Player:finish()
     -- TODO: delete me
     self:update()
 end
+
+
+instance = "player"
+player = Player.create()

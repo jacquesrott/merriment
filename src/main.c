@@ -14,7 +14,7 @@
 #include "planet.h"
 
 #include "entity.h"
-#include "scriptcomponent.h"
+#include "components/scriptcomponent.h"
 
 
 Game* dwarves;

@@ -4,7 +4,7 @@
 
 typedef struct PhysicComponent PhysicComponent;
 
-#include "entity.h"
+#include "../entity.h"
 
 
 struct PhysicComponent {

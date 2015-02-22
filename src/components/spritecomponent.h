@@ -3,9 +3,9 @@
 
 typedef struct SpriteComponent SpriteComponent;
 
-#include "sprite.h"
-#include "shader.h"
-#include "entity.h"
+#include "../sprite.h"
+#include "../shader.h"
+#include "../entity.h"
 
 
 struct SpriteComponent {

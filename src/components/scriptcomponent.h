@@ -7,7 +7,7 @@
 
 typedef struct ScriptComponent ScriptComponent;
 
-#include "entity.h"
+#include "../entity.h"
 
 
 struct ScriptComponent {

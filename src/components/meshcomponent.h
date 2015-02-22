@@ -3,9 +3,9 @@
 
 typedef struct MeshComponent MeshComponent;
 
-#include "mesh.h"
-#include "entity.h"
-#include "shader.h"
+#include "../mesh.h"
+#include "../entity.h"
+#include "../shader.h"
 
 
 struct MeshComponent {

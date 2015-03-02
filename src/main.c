@@ -17,13 +17,13 @@
 #include "components/script.h"
 
 
-Game* dwarves;
+Game* galaczy;
 
 
 int main() {
     int width = 1440, height = 900;
 
-    dwarves = game_create(width, height);
+    galaczy = game_create(width, height);
 
     float near = -1.0,
           far = 1.0,
@@ -40,7 +40,7 @@ int main() {
     GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
 
     Planet* planet = planet_create();
-    planet_generate(planet, dwarves->space);
+    planet_generate(planet, galaczy->space);
 
     Entity* entity = entity_create(NULL, NULL, NULL, NULL);
 
@@ -54,33 +54,33 @@ int main() {
 
     int zoom = 0;
 
-    while(dwarves->run == 0) {
-        timer_update(dwarves->timer);
-        while(SDL_PollEvent(&dwarves->event)) {
-            switch(dwarves->event.type) {
+    while(galaczy->run == 0) {
+        timer_update(galaczy->timer);
+        while(SDL_PollEvent(&galaczy->event)) {
+            switch(galaczy->event.type) {
                 case SDL_QUIT:
-                    dwarves->run = 1;
+                    galaczy->run = 1;
                     break;
                 case SDL_KEYUP:
-                    switch (dwarves->event.key.keysym.sym) {
+                    switch (galaczy->event.key.keysym.sym) {
                         case SDLK_SPACE:
                             planet_destroy(planet);
                             planet = planet_create();
-                            planet_generate(planet, dwarves->space);
+                            planet_generate(planet, galaczy->space);
                             break;
                         default:
                             break;
                     }
                     break;
                 case SDL_MOUSEWHEEL:
-                    zoom = abs(dwarves->event.wheel.y);
-                    if(dwarves->event.wheel.y < 0) {
+                    zoom = abs(galaczy->event.wheel.y);
+                    if(galaczy->event.wheel.y < 0) {
                         left *= zoom;
                         right *= zoom;
                         top *= zoom;
                         bottom *= zoom;
                         view = m4_ortho3d(far, near, top, bottom, left, right);
-                    } else if(dwarves->event.wheel.y > 0) {
+                    } else if(galaczy->event.wheel.y > 0) {
                         left /= zoom;
                         right /= zoom;
                         top /= zoom;
@@ -93,11 +93,11 @@ int main() {
             }
         }
 
-        while(game_is_synced(dwarves)) {
+        while(game_is_synced(galaczy)) {
             for(s = 0 ; s < entity->scripts_count ; ++s) {
                 scriptcomponent_update(script, entity->L);
             }
-            game_step(dwarves);
+            game_step(galaczy);
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -111,7 +111,7 @@ int main() {
         texture_unbind();
         program_unbind();
 
-        SDL_GL_SwapWindow(dwarves->window);
+        SDL_GL_SwapWindow(galaczy->window);
     }
 
     for(s = 0 ; s < entity->scripts_count ; ++s) {
@@ -123,7 +123,7 @@ int main() {
     sprite_destroy(sprite);
     planet_destroy(planet);
 
-    game_destroy(dwarves);
+    game_destroy(galaczy);
 
     return EXIT_SUCCESS;
 }

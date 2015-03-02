@@ -13,7 +13,7 @@ SDL_Window* window_create(int width, int height) {
     glcontext_init();
 
     SDL_Window* window = SDL_CreateWindow(
-            "Dwarves",
+            "Galaczy",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             width, height,
             SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);

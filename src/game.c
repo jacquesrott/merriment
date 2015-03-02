@@ -45,5 +45,5 @@ void game_destroy(Game* game) {
     cpSpaceFree(game->space);
     free(game);
     SDL_Quit();
-    printf("Quitting Dwarves.\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Quitting Galaczy.\n");
 }

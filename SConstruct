@@ -53,6 +53,7 @@ env.Append(CCFLAGS=[
     '-Werror',
     '-fcolor-diagnostics',
     '-I/usr/local/include/luajit-2.0/',
+    '-I/usr/local/include/',
 ])
 env.Append(LIBPATH=['/usr/local/lib/'])
 env.Append(LINKFLAGS=[
@@ -64,6 +65,7 @@ env.Append(LINKFLAGS=[
     '-Bdynamic', '-lm', '-ldl',
     '-pagezero_size', '10000',
     '-image_base', '100000000',
+    '-lchipmunk'
 ])
 
 sources = env.Glob('build/*.c')

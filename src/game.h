@@ -10,11 +10,10 @@ typedef struct {
     SDL_Event event;
     SDL_Window* window;
     SDL_GLContext gl;
-    unsigned int last_time;
+    GLuint vao_id;
 } Game;
 
 
-void print_error(const char* message);
 Game* game_create(int width, int height);
 void game_destroy(Game* game);
 

@@ -5,6 +5,7 @@
 #include "almath.h"
 #include "planet.h"
 #include "random.h"
+#include "physic.h"
 #include "config.h"
 
 
@@ -17,6 +18,7 @@ Planet* planet_create() {
 
 
 void planet_destroy(Planet* planet) {
+    cpBodyDestroy(planet->body);
     polycurve_destroy(planet->curve);
     mesh_destroy(planet->mesh);
     free(planet);
@@ -30,7 +32,7 @@ void* array_concat(void* out, const void* a, size_t a_size, const void* b, size_
 }
 
 
-void planet_generate(Planet* planet) {
+void planet_generate(Planet* planet, cpSpace* space) {
     int max_points = 360;
     int counter = 0;
     float angle;
@@ -74,4 +76,7 @@ void planet_generate(Planet* planet) {
     );
 
     planet->mesh = mesh_create(vertices, vertice_size, indices, indices_size);
+
+    planet->body = cpSpaceAddBody(space, cpBodyNew(10000.0, INFINITY));
+    polycurve_get_shape(planet->curve, space, planet->body);
 }

@@ -6,5 +6,6 @@
 
 
 void check_gl_errors(const char* message);
+void print_sdl_error(const char* message);
 
 #endif

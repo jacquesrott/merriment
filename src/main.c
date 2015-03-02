@@ -21,12 +21,9 @@ Game* dwarves;
 
 
 int main() {
-    cpSpace *space = cpSpaceNew();
-
     int width = 1440, height = 900;
 
     dwarves = game_create(width, height);
-    Timer* timer = timer_create();
 
     float near = -1.0,
           far = 1.0,
@@ -43,7 +40,7 @@ int main() {
     GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
 
     Planet* planet = planet_create();
-    planet_generate(planet, space);
+    planet_generate(planet, dwarves->space);
 
     Entity* entity = entity_create(NULL, NULL, NULL, NULL);
 
@@ -58,7 +55,7 @@ int main() {
     int zoom = 0;
 
     while(dwarves->run == 0) {
-        timer_update(timer);
+        timer_update(dwarves->timer);
         while(SDL_PollEvent(&dwarves->event)) {
             switch(dwarves->event.type) {
                 case SDL_QUIT:
@@ -69,7 +66,7 @@ int main() {
                         case SDLK_SPACE:
                             planet_destroy(planet);
                             planet = planet_create();
-                            planet_generate(planet, space);
+                            planet_generate(planet, dwarves->space);
                             break;
                         default:
                             break;
@@ -96,12 +93,11 @@ int main() {
             }
         }
 
-        while(timer->accumulator >= timer->dt) {
+        while(game_is_synced(dwarves)) {
             for(s = 0 ; s < entity->scripts_count ; ++s) {
                 scriptcomponent_update(script, entity->L);
             }
-            cpSpaceStep(space, timer->dt);
-            timer_sync(timer);
+            game_step(dwarves);
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -127,9 +123,6 @@ int main() {
     sprite_destroy(sprite);
     planet_destroy(planet);
 
-    cpSpaceFree(space);
-
-    timer_destroy(timer);
     game_destroy(dwarves);
 
     return EXIT_SUCCESS;

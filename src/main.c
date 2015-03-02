@@ -1,17 +1,17 @@
-#include <time.h>
 #include <SDL2/SDL.h>
 #include <OpenGL/gl3.h>
-
 #include <stdio.h>
+#include <chipmunk/chipmunk.h>
+
 #include "game.h"
 #include "config.h"
 #include "almath.h"
 #include "shader.h"
-#include "error.h"
 #include "texture.h"
 #include "buffer.h"
 #include "sprite.h"
 #include "planet.h"
+#include "timer.h"
 
 #include "entity.h"
 #include "components/script.h"
@@ -20,27 +20,13 @@
 Game* dwarves;
 
 
-void quit_dwarves() {
-    game_destroy(dwarves);
-    SDL_Quit();
-    printf("Quitting Dwarves.\n");
-}
-
-
 int main() {
-    srandom(time(NULL));
+    cpSpace *space = cpSpaceNew();
 
     int width = 1440, height = 900;
-    unsigned int frame_time, current_time, accumulator = 0;
-
-    if(SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-        print_error("Failed to initialize");
-    }
-    atexit(quit_dwarves);
-
-    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
     dwarves = game_create(width, height);
+    Timer* timer = timer_create();
 
     float near = -1.0,
           far = 1.0,
@@ -49,13 +35,7 @@ int main() {
           top = height / 2.0,
           bottom = -height / 2.0;
 
-    GLuint vao_id;
-    glGenVertexArrays(1, &vao_id);
-    glBindVertexArray(vao_id);
-    check_gl_errors("VAO creation");
-
     mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
-    m4_print(&view);
     GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
     Sprite* sprite = sprite_create("assets/red_square.png");
 
@@ -63,7 +43,7 @@ int main() {
     GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
 
     Planet* planet = planet_create();
-    planet_generate(planet);
+    planet_generate(planet, space);
 
     Entity* entity = entity_create(NULL, NULL, NULL, NULL);
 
@@ -75,36 +55,21 @@ int main() {
         scriptcomponent_init(script, entity->L);
     }
 
-    int ja = 0;
     int zoom = 0;
 
     while(dwarves->run == 0) {
-        current_time = SDL_GetTicks();
-        frame_time = current_time - dwarves->last_time;
-        dwarves->last_time = current_time;
-
-        accumulator += frame_time;
+        timer_update(timer);
         while(SDL_PollEvent(&dwarves->event)) {
             switch(dwarves->event.type) {
                 case SDL_QUIT:
                     dwarves->run = 1;
-                    break;
-                case SDL_MOUSEBUTTONDOWN:
-                    switch (dwarves->event.button.button) {
-                        case SDL_BUTTON_LEFT:
-                            sprite->transform = m4_identity();
-                            break;
-                        default:
-                            ja++;
-                            break;
-                    }
                     break;
                 case SDL_KEYUP:
                     switch (dwarves->event.key.keysym.sym) {
                         case SDLK_SPACE:
                             planet_destroy(planet);
                             planet = planet_create();
-                            planet_generate(planet);
+                            planet_generate(planet, space);
                             break;
                         default:
                             break;
@@ -131,20 +96,13 @@ int main() {
             }
         }
 
-        while(accumulator >= DW_DELTA_TIME) {
-            if(ja % 2 == 0) {
-                mat4 rot = m4_rotatez(0.2);
-                mat4 out;
-                m4_x_m4(&out, &rot, &sprite->transform);
-                sprite->transform = out;
-                ja = 1;
-            }
+        while(timer->accumulator >= timer->dt) {
             for(s = 0 ; s < entity->scripts_count ; ++s) {
                 scriptcomponent_update(script, entity->L);
             }
-            accumulator -= DW_DELTA_TIME;
+            cpSpaceStep(space, timer->dt);
+            timer_sync(timer);
         }
-
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -166,9 +124,13 @@ int main() {
 
     entity_destroy(entity);
     program_destroy(program);
-    glDeleteVertexArrays(1, &vao_id);
     sprite_destroy(sprite);
     planet_destroy(planet);
+
+    cpSpaceFree(space);
+
+    timer_destroy(timer);
+    game_destroy(dwarves);
 
     return EXIT_SUCCESS;
 }

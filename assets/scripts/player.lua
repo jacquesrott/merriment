@@ -22,8 +22,8 @@ end
 
 
 function Player:update()
-    print(self.name)
-    print(self.life)
+    -- print(self.name)
+    -- print(self.life)
 end
 
 

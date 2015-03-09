@@ -11,6 +11,8 @@
 
 
 typedef struct {
+    PoolItem pool;
+
     Entity* entity;
     const char* path;
     const char* instance;
@@ -21,14 +23,16 @@ typedef struct {
     ScriptComponent items[MAX_SCRIPTS];
     ScriptComponent* available;
     unsigned int count;
-    void (*free_item)(void* item);
+    void (*free_item)(ScriptComponent* item);
 } ScriptPool;
 
 
 ScriptPool* scriptpool_create();
 void* scriptpool_add(ScriptPool* pool, Entity* entity, lua_State* L, const char* path);
-void scriptpool_free(ScriptPool* pool, ScriptComponent* item);
+void scriptpool_destroy(ScriptPool* pool);
 
+
+void scriptcomponent_free_pool(ScriptComponent* item);
 void scriptcomponent_init(ScriptComponent* component, lua_State* L);
 void scriptcomponent_update(ScriptComponent* component, lua_State* L);
 void scriptcomponent_finish(ScriptComponent* component, lua_State* L);

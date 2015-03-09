@@ -1,46 +1,45 @@
-#include <assert.h>
 #include <stdlib.h>
 
 #include "entity.h"
+#include "pool.h"
 
 
-Entity* entity_create(
-        TransformCompoment* transform,
-        PhysicComponent* physic,
-        SpriteComponent* sprite,
-        MeshComponent* mesh) {
-    Entity* entity = malloc(sizeof(*entity));
+EntityPool* entitypool_create() {
+    EntityPool* pool = malloc(sizeof(*pool));
+    pool_init(pool, MAX_ENTITIES);
+    pool->free = entitypool_free;
+    return pool;
+}
 
-    entity->transform = transform;
-    entity->scripts_count = 0;
-    entity->physic = physic;
-    entity->mesh = mesh;
-    entity->sprite = sprite;
 
-    entity->L = luaL_newstate();
-    luaL_openlibs(entity->L);
+void* entitypool_add(EntityPool* pool) {
+    Entity* item = pool_pop_available(pool);
+    if(item == NULL) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "EntityPool stack overflow.\n", name);
+        return NULL;
+    }
 
-    return entity;
+    item->L = luaL_newstate();
+    luaL_openlibs(item->L);
+    item->components.count = 0;
+
+    return item;
+}
+
+
+void entitypool_free(EntityPool* pool, Entity* item) {
+    entity_destroy(item);
+    pool_set_available(pool, item);
 }
 
 
 void entity_destroy(Entity* entity) {
-    if(entity->physic) physiccomponent_destroy(entity->physic);
-    if(entity->sprite) spritecomponent_destroy(entity->sprite);
-    if(entity->mesh) meshcomponent_destroy(entity->mesh);
-    int i;
-    for(i = 0 ; i < entity->scripts_count ; ++i) {
-        scriptcomponent_destroy(entity->scripts[i]);
-    }
     lua_close(entity->L);
-    free(entity);
-}
-
-
-void entity_add_script(Entity* entity, ScriptComponent* component) {
-    assert(entity->scripts_count < MAX_SCRIPT_COMPONENTS);
-
-    entity->scripts[entity->scripts_count] = component;
-    ++entity->scripts_count;
-    component->entity = entity;
+    int i;
+    for(i = 0 ; i < entity->components.count ; ++i) {
+        void* component = entity->components.items[i];
+        void* pool = component->pool;
+        pool->free_item(pool, component);
+    }
+    entity->components.count = 0;
 }

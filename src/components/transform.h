@@ -8,27 +8,29 @@
 
 
 typedef struct {
+    PoolItem pool;
+
     Entity* entity;
     vec2 position;
     float angle;
     mat4 transform;
-} TransformCompoment;
+} TransformComponent;
 
 
 typedef struct {
     TransformComponent items[MAX_TRANSFORMS];
     TransformComponent* available;
     unsigned int count;
-    void (*free_item)(void* item);
+    void (*free_item)(TransformComponent* item);
 } TransformPool;
 
 
 TransformPool* transformpool_create();
 void* transformpool_add(TransformPool* pool, Entity* entity, vec2 position, float angle);
-void transformpool_free(TransformPool* pool, TransformComponent* item);
+void transformpool_destroy(TransformPool* pool);
 
-TransformCompoment* transformcomponent_create(vec2 position, float angle);
-void transformcomponent_destroy(TransformCompoment* component);
+void transformcomponent_free_pool(TransformComponent* item);
+void transformcomponent_destroy(TransformComponent* component);
 
 
 #endif

@@ -14,7 +14,6 @@
 #include "timer.h"
 
 #include "entity.h"
-#include "components/script.h"
 
 
 Game* galaczy;
@@ -41,16 +40,6 @@ int main() {
 
     Planet* planet = planet_create();
     planet_generate(planet, galaczy->space);
-
-    Entity* entity = entity_create(NULL, NULL, NULL, NULL);
-
-    ScriptComponent* script = scriptcomponent_create(entity->L, "assets/scripts/player.lua");
-    entity_add_script(entity, script);
-
-    int s;
-    for(s = 0 ; s < entity->scripts_count ; ++s) {
-        scriptcomponent_init(script, entity->L);
-    }
 
     int zoom = 0;
 
@@ -94,9 +83,6 @@ int main() {
         }
 
         while(game_is_synced(galaczy)) {
-            for(s = 0 ; s < entity->scripts_count ; ++s) {
-                scriptcomponent_update(script, entity->L);
-            }
             game_step(galaczy);
         }
 
@@ -114,11 +100,6 @@ int main() {
         SDL_GL_SwapWindow(galaczy->window);
     }
 
-    for(s = 0 ; s < entity->scripts_count ; ++s) {
-        scriptcomponent_finish(script, entity->L);
-    }
-
-    entity_destroy(entity);
     program_destroy(program);
     sprite_destroy(sprite);
     planet_destroy(planet);

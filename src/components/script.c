@@ -3,10 +3,23 @@
 
 #include "script.h"
 
+ScriptPool* scriptpool_create() {
+    ScriptPool* pool = malloc(sizeof(*pool));
+    pool_init(pool, MAX_SCRIPTS);
+    pool->free = scriptpool_free;
+    return pool;
+}
 
-ScriptComponent* scriptcomponent_create(lua_State* L, const char* path) {
-    ScriptComponent* component = malloc(sizeof(*component));
-    component->path = path;
+
+void* scriptpool_add(ScriptPool* pool, Entity* entity, lua_State* L, const char* path) {
+    ScriptComponent* item = pool_pop_available(pool);
+    if(item == NULL) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ScriptPool stack overflow.\n", name);
+        return NULL;
+    }
+
+    item->entity = entity;
+    item->path = path;
     int status = luaL_loadfile(L, path);
     status |= lua_pcall(L, 0, 0, 0);
     if(status) {
@@ -14,10 +27,15 @@ ScriptComponent* scriptcomponent_create(lua_State* L, const char* path) {
     }
 
     lua_getglobal(L, "instance");
-    component->instance = lua_tostring(L, -1);
+    item->instance = lua_tostring(L, -1);
     lua_pop(L, 1);
 
-    return component;
+    return item;
+}
+
+
+void scriptpool_free(ScriptPool* pool, ScriptComponent* item) {
+    pool_set_available(pool, item);
 }
 
 
@@ -45,9 +63,4 @@ void scriptcomponent_update(ScriptComponent* component, lua_State* L) {
 
 void scriptcomponent_finish(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "finish");
-}
-
-
-void scriptcomponent_destroy(ScriptComponent* component) {
-    free(component);
 }

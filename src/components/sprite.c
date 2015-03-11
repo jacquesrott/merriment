@@ -20,7 +20,7 @@ void spritepool_destroy(SpritePool* pool) {
     for(i = 0 ; i < pool->count ; ++i) {
         SpriteComponent* item = &pool->items[i];
         SpritePool* pool = item->pool.container;
-        pool->free_item(item);
+        spritecomponent_free_pool(item);
     }
 }
 
@@ -42,7 +42,6 @@ static void pool_set_available(SpritePool* pool, SpriteComponent* item) {
 SpritePool* spritepool_create() {
     SpritePool* pool = malloc(sizeof(*pool));
     pool_init(pool, MAX_RENDERERS);
-    pool->free_item = spritecomponent_free_pool;
     return pool;
 }
 

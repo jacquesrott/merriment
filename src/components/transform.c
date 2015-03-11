@@ -20,7 +20,7 @@ void transformpool_destroy(TransformPool* pool) {
     for(i = 0 ; i < pool->count ; ++i) {
         TransformComponent* item = &pool->items[i];
         TransformPool* pool = item->pool.container;
-        pool->free_item(item);
+        transformcomponent_free_pool(item);
     }
 }
 
@@ -42,7 +42,6 @@ static void pool_set_available(TransformPool* pool, TransformComponent* item) {
 TransformPool* transformpool_create() {
     TransformPool* pool = malloc(sizeof(*pool));
     pool_init(pool, MAX_TRANSFORMS);
-    pool->free_item = transformcomponent_free_pool;
     return pool;
 }
 

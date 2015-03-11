@@ -10,7 +10,7 @@
 typedef struct {
     PoolItem pool;
 
-    Entity* entity;
+    ComponentItem* component;
     vec2 position;
     float angle;
     mat4 transform;
@@ -21,7 +21,6 @@ typedef struct {
     TransformComponent items[MAX_TRANSFORMS];
     TransformComponent* available;
     unsigned int count;
-    void (*free_item)(TransformComponent* item);
 } TransformPool;
 
 

@@ -10,7 +10,8 @@
 
 typedef struct {
     PoolItem pool;
-    Entity* entity;
+
+    ComponentItem* component;
     Sprite* sprite;
     GLuint program;
 } SpriteComponent;
@@ -20,7 +21,6 @@ typedef struct {
     SpriteComponent items[MAX_RENDERERS];
     SpriteComponent* available;
     unsigned int count;
-    void (*free_item)(SpriteComponent* item);
 } SpritePool;
 
 

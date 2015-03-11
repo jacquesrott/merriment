@@ -13,7 +13,7 @@
 typedef struct {
     PoolItem pool;
 
-    Entity* entity;
+    ComponentItem* component;
     const char* path;
     const char* instance;
 } ScriptComponent;
@@ -23,7 +23,6 @@ typedef struct {
     ScriptComponent items[MAX_SCRIPTS];
     ScriptComponent* available;
     unsigned int count;
-    void (*free_item)(ScriptComponent* item);
 } ScriptPool;
 
 

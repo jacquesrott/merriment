@@ -20,7 +20,7 @@ void scriptpool_destroy(ScriptPool* pool) {
     for(i = 0 ; i < pool->count ; ++i) {
         ScriptComponent* item = &pool->items[i];
         ScriptPool* pool = item->pool.container;
-        pool->free_item(item);
+        scriptcomponent_free_pool(item);
     }
 }
 
@@ -42,7 +42,6 @@ static void pool_set_available(ScriptPool* pool, ScriptComponent* item) {
 ScriptPool* scriptpool_create() {
     ScriptPool* pool = malloc(sizeof(*pool));
     pool_init(pool, MAX_SCRIPTS);
-    pool->free_item = scriptcomponent_free_pool;
     return pool;
 }
 

@@ -4,10 +4,6 @@
 #include "entity.h"
 #include "pool.h"
 
-#include "components/physic.h"
-#include "components/transform.h"
-#include "components/script.h"
-
 
 static void pool_init(EntityPool* pool, unsigned int capacity) {
     pool->available = &pool->items[0];
@@ -24,8 +20,7 @@ void entitypool_destroy(EntityPool* pool) {
     int i;
     for(i = 0 ; i < pool->count ; ++i) {
         Entity* item = &pool->items[i];
-        EntityPool* pool = item->pool.container;
-        pool->free_item(item);
+        entity_destroy(item);
     }
 }
 
@@ -47,7 +42,6 @@ static void pool_set_available(EntityPool* pool, Entity* item) {
 EntityPool* entitypool_create() {
     EntityPool* pool = malloc(sizeof(*pool));
     pool_init(pool, MAX_ENTITIES);
-    pool->free_item = entity_free_pool;
     return pool;
 }
 
@@ -61,13 +55,21 @@ void* entitypool_add(EntityPool* pool) {
 
     item->L = luaL_newstate();
     luaL_openlibs(item->L);
+
+    item->components.head = NULL;
     item->components.count = 0;
 
     return item;
 }
 
 
+void entity_free(Entity* entity) {
+    componentlist_clear(&entity->components);
+}
+
+
 void entity_free_pool(Entity* item) {
+    entity_free(item);
     entity_destroy(item);
     pool_set_available(item->pool.container, item);
 }
@@ -75,32 +77,4 @@ void entity_free_pool(Entity* item) {
 
 void entity_destroy(Entity* entity) {
     lua_close(entity->L);
-    int i;
-    for(i = 0 ; i < entity->components.count ; ++i) {
-        ComponentItem* item = entity->components.items[i];
-        switch(item->type) {
-            case CAMERA:
-                // TODO: implement CameraComponent
-                break;
-            case PHYSIC:
-                break;
-            case TRANSFORM: {
-                TransformComponent* component = item->id;
-                transformcomponent_free_pool(component);
-                break;
-            }
-            case SPRITE:
-                break;
-            case MESH:
-                break;
-            case SCRIPT: {
-                ScriptComponent* component = item->id;
-                scriptcomponent_free_pool(component);
-                break;
-             }
-            default:
-                break;
-        }
-    }
-    entity->components.count = 0;
 }

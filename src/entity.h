@@ -6,37 +6,27 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+typedef struct Entity Entity;
+
 #include "almath.h"
+#include "component.h"
 #include "config.h"
 #include "pool.h"
 
 
-typedef enum {
-    CAMERA      = (1 << 0),
-    PHYSIC      = (1 << 1),
-    TRANSFORM   = (1 << 2),
-    SPRITE      = (1 << 3),
-    MESH        = (1 << 4),
-    SCRIPT      = (1 << 5)
-} ComponentType;
+struct ComponentList {
+    ComponentItem* head;
+    unsigned int count;
+};
 
 
-typedef struct {
-    void* id;
-    ComponentType type;
-} ComponentItem;
-
-
-typedef struct {
+struct Entity {
     PoolItem pool;
 
     lua_State* L;
 
-    struct {
-        ComponentItem* items[MAX_COMPONENTS];
-        unsigned int count;
-    } components;
-} Entity;
+    ComponentList components;
+};
 
 
 typedef struct EntityPool EntityPool;
@@ -46,7 +36,6 @@ struct EntityPool {
     Entity items[MAX_ENTITIES];
     Entity* available;
     unsigned int count;
-    void (*free_item)(Entity* item);
 };
 
 

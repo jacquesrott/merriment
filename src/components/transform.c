@@ -12,30 +12,42 @@ static void pool_init(TransformPool* pool, unsigned int capacity) {
         pool->items[i].pool.next = &pool->items[i + 1];
     }
     pool->items[capacity].pool.next = NULL;
+    pool->count = 0;
 }
 
 
 void transformpool_destroy(TransformPool* pool) {
-    int i;
-    for(i = 0 ; i < pool->count ; ++i) {
-        TransformComponent* item = &pool->items[i];
-        TransformPool* pool = item->pool.container;
+    TransformComponent* item = pool->allocated;
+    while(item) {
         transformcomponent_free_pool(item);
+        item = item->pool.next;
     }
+    free(pool);
 }
 
 
 static TransformComponent* pool_pop_available(TransformPool* pool) {
     TransformComponent* item = pool->available;
     pool->available = item->pool.next;
+
+    item->pool.next = pool->allocated;
+    pool->allocated = item;
+    item->pool.previous = NULL;
+    ++pool->count;
     return item;
 }
 
 
 static void pool_set_available(TransformPool* pool, TransformComponent* item) {
-    TransformComponent* available = item;
+    TransformComponent* previous = item->pool.previous;
+    TransformComponent* next = item->pool.next;
+
+    if(next) next->pool.previous = previous;
+    if(previous) previous->pool.next = next;
+
     item->pool.next = pool->available;
-    pool->available = available;
+    pool->available = item;
+    --pool->count;
 }
 
 
@@ -53,14 +65,14 @@ static void transformcomponent_refresh(TransformComponent* component) {
 }
 
 
-void* transformpool_add(TransformPool* pool, Entity* entity, vec2 position, float angle) {
+void* transformpool_add(TransformPool* pool, vec2 position, float angle) {
     TransformComponent* item = pool_pop_available(pool);
     if(item == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TransformPool stack overflow.\n");
         return NULL;
     }
 
-    item->entity = entity;
+    item->component = NULL;
     item->position = position;
     item->angle = angle;
     transformcomponent_refresh(item);

@@ -21,13 +21,14 @@ typedef struct {
 
 typedef struct {
     ScriptComponent items[MAX_SCRIPTS];
+    ScriptComponent* allocated;
     ScriptComponent* available;
     unsigned int count;
 } ScriptPool;
 
 
 ScriptPool* scriptpool_create();
-void* scriptpool_add(ScriptPool* pool, Entity* entity, lua_State* L, const char* path);
+ScriptComponent* scriptpool_add(ScriptPool* pool, lua_State* L, const char* path);
 void scriptpool_destroy(ScriptPool* pool);
 
 

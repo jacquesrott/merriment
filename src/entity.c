@@ -7,35 +7,49 @@
 
 static void pool_init(EntityPool* pool, unsigned int capacity) {
     pool->available = &pool->items[0];
+    pool->allocated = NULL;
     capacity = capacity - 1;
     int i;
     for(i = 0 ; i < capacity ; ++i) {
         pool->items[i].pool.next = &pool->items[i + 1];
     }
     pool->items[capacity].pool.next = NULL;
+    pool->count = 0;
 }
 
 
 void entitypool_destroy(EntityPool* pool) {
-    int i;
-    for(i = 0 ; i < pool->count ; ++i) {
-        Entity* item = &pool->items[i];
+    Entity* item = pool->allocated;
+    while(item) {
         entity_destroy(item);
+        item = item->pool.next;
     }
+    free(pool);
 }
 
 
 static Entity* pool_pop_available(EntityPool* pool) {
     Entity* item = pool->available;
     pool->available = item->pool.next;
+
+    item->pool.next = pool->allocated;
+    pool->allocated = item;
+    item->pool.previous = NULL;
+    ++pool->count;
     return item;
 }
 
 
 static void pool_set_available(EntityPool* pool, Entity* item) {
-    Entity* available = item;
+    Entity* previous = item->pool.previous;
+    Entity* next = item->pool.next;
+
+    if(next) next->pool.previous = previous;
+    if(previous) previous->pool.next = next;
+
     item->pool.next = pool->available;
-    pool->available = available;
+    pool->available = item;
+    --pool->count;
 }
 
 

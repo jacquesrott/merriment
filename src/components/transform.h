@@ -19,13 +19,14 @@ typedef struct {
 
 typedef struct {
     TransformComponent items[MAX_TRANSFORMS];
+    TransformComponent* allocated;
     TransformComponent* available;
     unsigned int count;
 } TransformPool;
 
 
 TransformPool* transformpool_create();
-void* transformpool_add(TransformPool* pool, Entity* entity, vec2 position, float angle);
+void* transformpool_add(TransformPool* pool, vec2 position, float angle);
 void transformpool_destroy(TransformPool* pool);
 
 void transformcomponent_free_pool(TransformComponent* item);

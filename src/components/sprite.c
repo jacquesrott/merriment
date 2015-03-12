@@ -12,30 +12,42 @@ static void pool_init(SpritePool* pool, unsigned int capacity) {
         pool->items[i].pool.next = &pool->items[i + 1];
     }
     pool->items[capacity].pool.next = NULL;
+    pool->count = 0;
 }
 
 
 void spritepool_destroy(SpritePool* pool) {
-    int i;
-    for(i = 0 ; i < pool->count ; ++i) {
-        SpriteComponent* item = &pool->items[i];
-        SpritePool* pool = item->pool.container;
+    SpriteComponent* item = pool->allocated;
+    while(item) {
         spritecomponent_free_pool(item);
+        item = item->pool.next;
     }
+    free(pool);
 }
 
 
 static SpriteComponent* pool_pop_available(SpritePool* pool) {
     SpriteComponent* item = pool->available;
     pool->available = item->pool.next;
+
+    item->pool.next = pool->allocated;
+    pool->allocated = item;
+    item->pool.previous = NULL;
+    ++pool->count;
     return item;
 }
 
 
 static void pool_set_available(SpritePool* pool, SpriteComponent* item) {
-    SpriteComponent* available = item;
+    SpriteComponent* previous = item->pool.previous;
+    SpriteComponent* next = item->pool.next;
+
+    if(next) next->pool.previous = previous;
+    if(previous) previous->pool.next = next;
+
     item->pool.next = pool->available;
-    pool->available = available;
+    pool->available = item;
+    --pool->count;
 }
 
 
@@ -46,14 +58,14 @@ SpritePool* spritepool_create() {
 }
 
 
-void* spritepool_add(SpritePool* pool, Entity* entity, Sprite* sprite, GLuint program) {
+void* spritepool_add(SpritePool* pool, Sprite* sprite, GLuint program) {
     SpriteComponent* item = pool_pop_available(pool);
     if(item == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SpritePool stack overflow.\n");
         return NULL;
     }
 
-    item->entity = entity;
+    item->component = NULL;
     item->sprite = sprite;
     item->program = program;
 

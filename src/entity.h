@@ -34,6 +34,7 @@ typedef struct EntityPool EntityPool;
 
 struct EntityPool {
     Entity items[MAX_ENTITIES];
+    Entity* allocated;
     Entity* available;
     unsigned int count;
 };

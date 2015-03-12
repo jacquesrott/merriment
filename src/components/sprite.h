@@ -19,13 +19,14 @@ typedef struct {
 
 typedef struct {
     SpriteComponent items[MAX_RENDERERS];
+    SpriteComponent* allocated;
     SpriteComponent* available;
     unsigned int count;
 } SpritePool;
 
 
 SpritePool* spritepool_create();
-void* spritepool_add(SpritePool* pool, Entity* entity, Sprite* sprite, GLuint program);
+void* spritepool_add(SpritePool* pool, Sprite* sprite, GLuint program);
 void spritepool_destroy(SpritePool* pool);
 
 void spritecomponent_free_pool(SpriteComponent* item);

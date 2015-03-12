@@ -4,6 +4,7 @@
 
 typedef struct {
     void* next;
+    void* previous;
     void* container;
 } PoolItem;
 

@@ -24,6 +24,13 @@ void componentlist_clear(ComponentList* list) {
 void componentlist_pop(ComponentList* list, ComponentItem* item) {
     ComponentItem* cursor = list->head;
 
+    if(cursor == item) {
+        list->head = item->next;
+        component_free(item);
+        --list->count;
+        return;
+    }
+
     while(cursor) {
         if(cursor->next == item) {
             cursor->next = item->next;
@@ -61,7 +68,7 @@ void component_free(ComponentItem* item) {
             break;
         case MESH:
             break;
-        case SCRIPT: 
+        case SCRIPT:
             scriptcomponent_free_pool(item->id);
             break;
         default:

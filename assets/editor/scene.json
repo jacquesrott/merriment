@@ -1,0 +1,32 @@
+{
+    "entities": [
+        {
+            "components": [
+                {
+                    "instance": "",
+                    "path": "assets/scripts/player.lua",
+                    "type": "script"
+                },
+                {
+                    "angle": 0.0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "type": "transform"
+                },
+                {
+                    "sprite": "assets/red_square.png",
+                    "type": "sprite"
+                }
+            ],
+            "name": "test"
+        }
+    ],
+    "path": "scene.mp",
+    "source": "scene.json"
+}

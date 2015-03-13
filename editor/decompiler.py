@@ -1,15 +1,16 @@
 import msgpack
 import json
 import os
+import time
 
-from editor.compiler import EDITOR_PATH, SCENES_PATH, COMPONENT_TYPES
+from editor.compiler import init, finish, EDITOR_PATH, SCENES_PATH, COMPONENT_TYPES
 
 COMPONENT_TYPES = {v: k for k, v in COMPONENT_TYPES.items()}
 
 
 if __name__ == "__main__":
-    scenes = [file for file in os.listdir(SCENES_PATH)
-              if os.path.isfile(os.path.join(SCENES_PATH, file))]
+    scenes = init(SCENES_PATH)
+    start = time.time()
 
     for path in scenes:
         full_path = os.path.join(SCENES_PATH, path)
@@ -31,5 +32,5 @@ if __name__ == "__main__":
             json.dump(scene, decompiled, sort_keys=True, indent=4, separators=(',', ': '))
         print "%s\twritten" % full_source
         print "-" * 4
-
-    print "%s files decompiled" % len(scenes)
+    end = time.time()
+    finish(start, end, len(scenes), "de")

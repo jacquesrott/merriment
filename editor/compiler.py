@@ -1,6 +1,7 @@
 import msgpack
 import json
 import os
+import time
 
 
 SCENES_PATH = "assets/scenes/"
@@ -15,10 +16,19 @@ COMPONENT_TYPES = {
     "script": 1 << 5
 }
 
+def init(path):
+    return [file for file in os.listdir(path)
+            if os.path.isfile(os.path.join(path, file))]
+
+def finish(start, end, count, action=""):
+    delta = end - start
+    velocity = delta / count
+    print "%s files %scompiled in %.4f s - %.4f s/file" % (count, action, delta, velocity)
+
 
 if __name__ == "__main__":
-    scenes = [file for file in os.listdir(EDITOR_PATH)
-              if os.path.isfile(os.path.join(EDITOR_PATH, file))]
+    scenes = init(EDITOR_PATH)
+    start = time.time()
 
     for path in scenes:
         full_path = os.path.join(EDITOR_PATH, path)
@@ -41,5 +51,5 @@ if __name__ == "__main__":
 
         print "%s\twritten" % destination
         print "-" * 4
-
-    print "%s files compiled" % len(scenes)
+    end = time.time()
+    finish(start, end, len(scenes))

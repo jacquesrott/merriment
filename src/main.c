@@ -32,8 +32,8 @@ int main() {
           bottom = -height / 2.0;
 
     mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
-    GLuint program = program_load("assets/vertex.vs", "assets/fragment.fs");
-    Sprite* sprite = sprite_create("assets/red_square.png");
+    GLuint program = program_load("assets/shaders/vertex.vs", "assets/shaders/fragment.fs");
+    Sprite* sprite = sprite_create("assets/sprites/red_square.png");
 
     GLuint umatrix_id = glGetUniformLocation(program, "MVP");
     GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");

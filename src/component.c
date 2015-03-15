@@ -1,10 +1,12 @@
 #include <stdlib.h>
+#include <SDL2/SDL.h>
 
 #include "component.h"
 
 #include "components/physic.h"
 #include "components/transform.h"
 #include "components/script.h"
+#include "components/sprite.h"
 
 
 
@@ -75,4 +77,39 @@ void component_free(ComponentItem* item) {
             break;
     }
     free(item);
+}
+
+
+void component_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
+    uint32_t size;
+    cmp_read_array(context, &size);
+
+    if(size != 2) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Malformed component.\n");
+        return;
+    }
+
+    ComponentType type;
+    cmp_read_int(context, (int32_t*) &type);
+
+    switch(type) {
+        case CAMERA:
+            break;
+        case PHYSIC:
+            break;
+        case TRANSFORM:
+            transformcomponent_deserialize(entity, scene->transforms, context);
+            break;
+        case SPRITE: {
+            spritecomponent_deserialize(entity, scene->sprites, context);
+            break;
+        }
+        case MESH:
+            break;
+        case SCRIPT:
+            scriptcomponent_deserialize(entity, scene->scripts, context);
+            break;
+        default:
+            break;
+    }
 }

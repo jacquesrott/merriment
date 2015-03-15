@@ -5,6 +5,8 @@ typedef struct ComponentItem ComponentItem;
 typedef struct ComponentList ComponentList;
 
 #include "entity.h"
+#include "scene.h"
+#include "cmp.h"
 
 
 typedef enum {
@@ -30,6 +32,7 @@ void componentlist_clear(ComponentList* list);
 void componentlist_pop(ComponentList* list, ComponentItem* item);
 ComponentItem* componentlist_push(ComponentList* list, void* id, ComponentType type, Entity* entity);
 void component_free(ComponentItem* item);
+void component_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context);
 
 
 #endif

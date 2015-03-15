@@ -26,7 +26,8 @@
                 [
                     "sprite",
                     {
-                        "sprite": "assets/sprites/red_square.png"
+                        "sprite": "assets/sprites/red_square.png",
+                        "program": ["assets/shaders/vertex.vs", "assets/shaders/fragment.fs"]
                     }
                 ]
             ],

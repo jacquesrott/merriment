@@ -3,12 +3,15 @@
 
 #include <chipmunk/chipmunk.h>
 
+typedef struct Scene Scene;
+
 #include "entity.h"
 #include "components/script.h"
 #include "components/transform.h"
+#include "components/sprite.h"
 
 
-typedef struct {
+struct Scene {
 //    Camera camera;
     cpSpace* space;
 
@@ -18,12 +21,15 @@ typedef struct {
     ScriptPool* scripts;
 //    PhysicPool* physics;
 //    MeshPool* meshes;
-//    SpritePool* sprites;
-} Scene;
+    SpritePool* sprites;
+    char* path;
+};
 
 
 Scene* scene_create();
 void scene_destroy(Scene* scene);
+void scene_serialize(Scene* scene, const char* path);
+void scene_deserialize(Scene* scene, const char* path);
 
 
 #endif

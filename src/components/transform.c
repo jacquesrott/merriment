@@ -65,7 +65,7 @@ static void transformcomponent_refresh(TransformComponent* component) {
 }
 
 
-void* transformpool_add(TransformPool* pool, vec2 position, float angle) {
+void* transformpool_add(TransformPool* pool, vec2 position, float angle, vec2 scale) {
     TransformComponent* item = pool_pop_available(pool);
     if(item == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TransformPool stack overflow.\n");
@@ -75,6 +75,7 @@ void* transformpool_add(TransformPool* pool, vec2 position, float angle) {
     item->component = NULL;
     item->position = position;
     item->angle = angle;
+    item->scale = scale;
     transformcomponent_refresh(item);
 
     return item;
@@ -89,4 +90,47 @@ void transformcomponent_free_pool(TransformComponent* item) {
 
 void transformcomponent_destroy(TransformComponent* component) {
     free(component);
+}
+
+
+static void v2_deserialize(cmp_ctx_t* context, vec2* v) {
+    uint32_t size;
+    cmp_read_array(context, &size);
+
+    if(size != 2) {
+        return;
+    }
+    cmp_read_float(context, &v->x);
+    cmp_read_float(context, &v->y);
+}
+
+
+void transformcomponent_deserialize(Entity* entity, TransformPool* pool, cmp_ctx_t* context) {
+    vec2 position = {0, 0};
+    float angle = 0.0;
+    vec2 scale = {1, 1};
+
+    uint32_t key_count;
+    char key[32];
+    uint32_t key_len;
+
+    cmp_read_map(context, &key_count);
+
+    int k;
+    for(k = 0 ; k < key_count ; ++k) {
+        key_len = sizeof(key);
+        cmp_read_str(context, key, &key_len);
+        key[key_len] = 0;
+
+        if(strcmp("angle", key) == 0) {
+            cmp_read_float(context, &angle);
+        } else if(strcmp("scale", key) == 0) {
+            v2_deserialize(context, &scale);
+        } else if(strcmp("position", key) == 0) {
+            v2_deserialize(context, &scale);
+        }
+    }
+
+    TransformComponent* transform = transformpool_add(pool, position, angle, scale);
+    componentlist_push(&entity->components, transform, TRANSFORM, entity);
 }

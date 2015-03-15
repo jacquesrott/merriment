@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 #include "sprite.h"
+#include "../shader.h"
+#include "../sprite.h"
 
 
 static void pool_init(SpritePool* pool, unsigned int capacity) {
@@ -81,4 +83,55 @@ void spritecomponent_free_pool(SpriteComponent* item) {
 void spritecomponent_destroy(SpriteComponent* component) {
     sprite_destroy(component->sprite);
     program_destroy(component->program);
+}
+
+
+static void program_deserialize(cmp_ctx_t* context, GLuint* program) {
+    uint32_t size;
+    cmp_read_array(context, &size);
+
+    if(size != 2) {
+        return;
+    }
+    char vertex_path[64];
+    char fragment_path[64];
+    uint32_t path_len = 65;
+
+    cmp_read_str(context, vertex_path, &path_len);
+    vertex_path[path_len] = 0;
+
+    path_len = 65;
+    cmp_read_str(context, fragment_path, &path_len);
+    fragment_path[path_len] = 0;
+
+    *program = program_load(vertex_path, fragment_path);
+}
+
+
+void spritecomponent_deserialize(Entity* entity, SpritePool* pool, cmp_ctx_t* context) {
+    char sprite_path[64];
+    GLuint program;
+    uint32_t key_count;
+    char key[32];
+    uint32_t key_len;
+
+    cmp_read_map(context, &key_count);
+
+    int k;
+    for(k = 0 ; k < key_count ; ++k) {
+        key_len = sizeof(key);
+        cmp_read_str(context, key, &key_len);
+        key[key_len] = 0;
+
+        if(strcmp("sprite", key) == 0) {
+            uint32_t path_len = 65;
+            cmp_read_str(context, sprite_path, &path_len);
+            sprite_path[path_len] = 0;
+        } else if (strcmp("program", key) == 0) {
+            program_deserialize(context, &program);
+        }
+    }
+    Sprite* sprite = sprite_create(sprite_path);
+    SpriteComponent* component = spritepool_add(pool, sprite, program);
+    componentlist_push(&entity->components, component, SPRITE, entity);
 }

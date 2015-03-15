@@ -26,6 +26,12 @@ def finish(start, end, count, action=""):
     print "%s files %scompiled in %.4f s - %.4f s/file" % (count, action, delta, velocity)
 
 
+def map_types(entities, types):
+    for entity in entities:
+        for component in entity["components"]:
+            component[0] = types.get(component[0])
+
+
 if __name__ == "__main__":
     scenes = init(EDITOR_PATH)
     start = time.time()
@@ -38,10 +44,7 @@ if __name__ == "__main__":
             scene = json.load(decompiled)
 
         print "%s\tloaded" % full_path
-
-        for entity in scene["entities"]:
-            for component in entity["components"]:
-                component["type"] = COMPONENT_TYPES.get(component["type"], COMPONENT_TYPES['script'])
+        map_types(scene['entities'], COMPONENT_TYPES)
         mp_scene = msgpack.packb(scene)
         print "%s\tpacked" % full_path
 

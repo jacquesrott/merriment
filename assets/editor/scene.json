@@ -2,27 +2,33 @@
     "entities": [
         {
             "components": [
-                {
-                    "instance": {},
-                    "path": "assets/scripts/player.lua",
-                    "type": "script"
-                },
-                {
-                    "angle": 0.0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "type": "transform"
-                },
-                {
-                    "sprite": "assets/red_square.png",
-                    "type": "sprite"
-                }
+                [
+                    "script",
+                    {
+                        "instance": {},
+                        "path": "assets/scripts/player.lua"
+                    }
+                ],
+                [
+                    "transform",
+                    {
+                        "angle": 0.0,
+                        "position": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ]
+                    }
+                ],
+                [
+                    "sprite",
+                    {
+                        "sprite": "assets/sprites/red_square.png"
+                    }
+                ]
             ],
             "name": "test"
         }

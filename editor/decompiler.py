@@ -3,7 +3,7 @@ import json
 import os
 import time
 
-from editor.compiler import init, finish, EDITOR_PATH, SCENES_PATH, COMPONENT_TYPES
+from editor.compiler import init, finish, map_types, EDITOR_PATH, SCENES_PATH, COMPONENT_TYPES
 
 COMPONENT_TYPES = {v: k for k, v in COMPONENT_TYPES.items()}
 
@@ -22,9 +22,7 @@ if __name__ == "__main__":
         scene = msgpack.unpackb(mp_scene)
         print "%s\tunpacked" % full_path
 
-        for entity in scene["entities"]:
-            for component in entity["components"]:
-                component["type"] = COMPONENT_TYPES.get(component["type"])
+        map_types(scene['entities'], COMPONENT_TYPES)
 
         full_source = os.path.join(EDITOR_PATH, scene["source"])
 

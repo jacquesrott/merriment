@@ -7,11 +7,14 @@
 #include <lualib.h>
 
 typedef struct Entity Entity;
+typedef struct EntityPool EntityPool;
 
 #include "almath.h"
 #include "component.h"
 #include "config.h"
 #include "pool.h"
+#include "scene.h"
+#include "cmp.h"
 
 
 struct ComponentList {
@@ -26,10 +29,8 @@ struct Entity {
     lua_State* L;
 
     ComponentList components;
+    char* name;
 };
-
-
-typedef struct EntityPool EntityPool;
 
 
 struct EntityPool {
@@ -45,6 +46,7 @@ void* entitypool_add(EntityPool* pool);
 void entitypool_destroy(EntityPool* pool);
 void entity_free_pool(Entity* item);
 void entity_destroy(Entity* entity);
+void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context);
 
 
 #endif

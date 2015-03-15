@@ -92,3 +92,32 @@ void entity_free_pool(Entity* item) {
 void entity_destroy(Entity* entity) {
     lua_close(entity->L);
 }
+
+
+void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
+    uint32_t key_count;
+    char key[32];
+    uint32_t key_len;
+
+    cmp_read_map(context, &key_count);
+
+    int k;
+    for(k = 0 ; k < key_count ; ++k) {
+        key_len = sizeof(key);
+        cmp_read_str(context, key, &key_len);
+        key[key_len] = 0;
+
+        if(strcmp("name", key) == 0) {
+            uint32_t name_len = 65;
+            cmp_read_str(context, entity->name, &name_len);
+        } else if(strcmp("components", key) == 0) {
+            uint32_t components_size;
+            cmp_read_array(context, &components_size);
+
+            int i;
+            for(i = 0 ; i < components_size ; ++i) {
+                component_deserialize(entity, scene, context);
+            }
+        }
+    }
+}

@@ -46,6 +46,7 @@ void* entitypool_add(EntityPool* pool);
 void entitypool_destroy(EntityPool* pool);
 void entity_free_pool(Entity* item);
 void entity_destroy(Entity* entity);
+void entity_serialize(Entity* entity, Scene* scene, cmp_ctx_t* context);
 void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context);
 
 

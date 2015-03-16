@@ -3,6 +3,7 @@
 
 #include "entity.h"
 #include "pool.h"
+#include "lua_cmsgpack.h"
 
 
 static void pool_init(EntityPool* pool, unsigned int capacity) {
@@ -69,6 +70,7 @@ void* entitypool_add(EntityPool* pool) {
 
     item->L = luaL_newstate();
     luaL_openlibs(item->L);
+    luaopen_cmsgpack(item->L);
 
     item->components.head = NULL;
     item->components.count = 0;
@@ -91,6 +93,24 @@ void entity_free_pool(Entity* item) {
 
 void entity_destroy(Entity* entity) {
     lua_close(entity->L);
+}
+
+
+void entity_serialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
+    cmp_write_map(context, 2);
+
+    cmp_write_str(context, "name", 4);
+    cmp_write_str(context, entity->name, strlen(entity->name));
+
+    cmp_write_str(context, "components", 10);
+    cmp_write_array(context, entity->components.count);
+
+    ComponentItem* component = entity->components.head;
+
+    while(component != NULL) {
+        component_serialize(component, entity, scene, context);
+        component = component->next;
+    }
 }
 
 

@@ -67,6 +67,7 @@ void component_free(ComponentItem* item) {
             transformcomponent_free_pool(item->id);
             break;
         case SPRITE:
+            spritecomponent_free_pool(item->id);
             break;
         case MESH:
             break;
@@ -77,6 +78,32 @@ void component_free(ComponentItem* item) {
             break;
     }
     free(item);
+}
+
+
+void component_serialize(ComponentItem* component, Entity* entity, Scene* scene, cmp_ctx_t* context) {
+    cmp_write_array(context, 2);
+    cmp_write_uint(context, component->type);
+
+    switch(component->type) {
+        case CAMERA:
+            break;
+        case PHYSIC:
+            break;
+        case TRANSFORM:
+            transformcomponent_serialize(component->id, context);
+            break;
+        case SPRITE:
+            spritecomponent_serialize(component->id, context);
+            break;
+        case MESH:
+            break;
+        case SCRIPT:
+            scriptcomponent_serialize(component->id, context);
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -100,10 +127,9 @@ void component_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
         case TRANSFORM:
             transformcomponent_deserialize(entity, scene->transforms, context);
             break;
-        case SPRITE: {
+        case SPRITE:
             spritecomponent_deserialize(entity, scene->sprites, context);
             break;
-        }
         case MESH:
             break;
         case SCRIPT:

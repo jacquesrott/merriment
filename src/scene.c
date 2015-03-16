@@ -46,11 +46,26 @@ static size_t file_writer(cmp_ctx_t *ctx, const void *data, size_t count) {
 
 void scene_serialize(Scene* scene, const char* path) {
     FILE *file = NULL;
+    cmp_ctx_t context;
     file = fopen(path, "w+b");
     if(file == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to open %s. ERROR: %d\n", path, errno);
     }
 
+    cmp_init(&context, file, file_reader, file_writer);
+
+    cmp_write_map(&context, 2);
+    cmp_write_str(&context, "path", 4);
+    cmp_write_str(&context, scene->path, strlen(scene->path));
+
+    cmp_write_str(&context, "entities", 8);
+    cmp_write_array(&context, scene->entities->count);
+    Entity* entity = scene->entities->available;
+
+    while(entity != NULL) {
+        entity_serialize(entity, scene, &context);
+        entity = entity->pool.next;
+    }
 
     fclose(file);
 }
@@ -71,7 +86,8 @@ void scene_deserialize(Scene* scene, const char* path) {
     cmp_init(&context, file, file_reader, file_writer);
     cmp_read_map(&context, &key_count);
 
-    while(--key_count) {
+    int k;
+    for(k = 0 ; k < key_count ; ++k) {
         key_len = sizeof(key);
         cmp_read_str(&context, key, &key_len);
         key[key_len] = 0;

@@ -5,9 +5,12 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+typedef struct ScriptPool ScriptPool;
+
 #include "../entity.h"
 #include "../config.h"
 #include "../pool.h"
+#include "../cmp.h"
 
 
 typedef struct {
@@ -19,12 +22,12 @@ typedef struct {
 } ScriptComponent;
 
 
-typedef struct {
+struct ScriptPool {
     ScriptComponent items[MAX_SCRIPTS];
     ScriptComponent* allocated;
     ScriptComponent* available;
     unsigned int count;
-} ScriptPool;
+};
 
 
 ScriptPool* scriptpool_create();
@@ -37,6 +40,6 @@ void scriptcomponent_init(ScriptComponent* component, lua_State* L);
 void scriptcomponent_update(ScriptComponent* component, lua_State* L);
 void scriptcomponent_finish(ScriptComponent* component, lua_State* L);
 void scriptcomponent_destroy(ScriptComponent* component);
-
+void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* context);
 
 #endif

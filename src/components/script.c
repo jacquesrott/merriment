@@ -93,7 +93,7 @@ static void script_run_method(lua_State* L, const char* instance, const char* na
 
     if(lua_pcall(L, 1, 0, 0)) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `%s` for %s: %s\n", 
+            SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `%s` for %s: %s\n",
             name, instance, lua_tostring(L, -1));
     }
 }
@@ -110,4 +110,49 @@ void scriptcomponent_update(ScriptComponent* component, lua_State* L) {
 
 void scriptcomponent_finish(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "finish");
+}
+
+
+void script_deserialize(lua_State* L, const char* instance, const char* serialized) {
+    lua_getglobal(L, instance);
+    lua_getglobal(L, "deserialize");
+    lua_pushvalue(L, -2);
+    lua_pushstring(L, serialized);
+
+    if(lua_pcall(L, 2, 0, 0)) {
+        SDL_LogError(
+            SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `deserialize` with instance %s and content `%s` : %s\n",
+            instance, serialized, lua_tostring(L, -1));
+    }
+}
+
+
+void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* context) {
+    char script_path[64];
+    uint32_t key_count;
+    char key[32];
+    uint32_t instance_len = 128;
+    char instance[instance_len];
+    uint32_t key_len;
+
+    cmp_read_map(context, &key_count);
+
+    int k;
+    for(k = 0 ; k < key_count ; ++k) {
+        key_len = sizeof(key);
+        cmp_read_str(context, key, &key_len);
+        key[key_len] = 0;
+
+        if(strcmp("path", key) == 0) {
+            uint32_t path_len = 65;
+            cmp_read_str(context, script_path, &path_len);
+            script_path[path_len] = 0;
+        } else if(strcmp("instance", key) == 0) {
+            cmp_read_bin(context, instance, &instance_len);
+        }
+    }
+
+    ScriptComponent* component = scriptpool_add(pool, entity->L, script_path);
+    componentlist_push(&entity->components, component, SCRIPT, entity);
+    script_deserialize(entity->L, component->instance, instance);
 }

@@ -86,6 +86,21 @@ void spritecomponent_destroy(SpriteComponent* component) {
 }
 
 
+void spritecomponent_serialize(SpriteComponent* component, cmp_ctx_t* context) {
+    cmp_write_map(context, 2);
+
+    cmp_write_str(context, "sprite", 6);
+    cmp_write_str(context, component->sprite->path, strlen(component->sprite->path));
+
+    cmp_write_str(context, "program", 7);
+    cmp_write_array(context, 2);
+
+    // TODO: unhardcode me
+    cmp_write_str(context, "assets/shaders/vertex.vs", 24);
+    cmp_write_str(context, "assets/shaders/fragment.fs", 26);
+}
+
+
 static void program_deserialize(cmp_ctx_t* context, GLuint* program) {
     uint32_t size;
     cmp_read_array(context, &size);

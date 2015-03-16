@@ -35,6 +35,7 @@ Sprite* sprite_create(const char* texture_path) {
     sprite->width = texture_get_param(sprite->texture, GL_TEXTURE_WIDTH);
     sprite->height = texture_get_param(sprite->texture, GL_TEXTURE_HEIGHT);
     sprite->transform = m4_identity();
+    sprite->path = texture_path;
 
     vec3 vertices[num_vertices];
     vec3 scale = {sprite->width, sprite->height, 1};

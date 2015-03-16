@@ -33,6 +33,7 @@ void spritepool_destroy(SpritePool* pool);
 
 void spritecomponent_free_pool(SpriteComponent* item);
 void spritecomponent_destroy(SpriteComponent* component);
+void spritecomponent_serialize(SpriteComponent* component, cmp_ctx_t* context);
 void spritecomponent_deserialize(Entity* entity, SpritePool* pool, cmp_ctx_t* context);
 
 

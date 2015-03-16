@@ -35,6 +35,7 @@ void transformpool_destroy(TransformPool* pool);
 
 void transformcomponent_free_pool(TransformComponent* item);
 void transformcomponent_destroy(TransformComponent* component);
+void transformcomponent_serialize(TransformComponent* component, cmp_ctx_t* context);
 void transformcomponent_deserialize(Entity* entity, TransformPool* pool, cmp_ctx_t* context);
 
 

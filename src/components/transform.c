@@ -93,6 +93,14 @@ void transformcomponent_destroy(TransformComponent* component) {
 }
 
 
+static void v2_serialize(cmp_ctx_t* context, vec2* v) {
+    cmp_write_array(context, 2);
+
+    cmp_write_float(context, v->x);
+    cmp_write_float(context, v->y);
+}
+
+
 static void v2_deserialize(cmp_ctx_t* context, vec2* v) {
     uint32_t size;
     cmp_read_array(context, &size);
@@ -102,6 +110,20 @@ static void v2_deserialize(cmp_ctx_t* context, vec2* v) {
     }
     cmp_read_float(context, &v->x);
     cmp_read_float(context, &v->y);
+}
+
+
+void transformcomponent_serialize(TransformComponent* component, cmp_ctx_t* context) {
+    cmp_write_map(context, 3);
+
+    cmp_write_str(context, "angle", 5);
+    cmp_write_float(context, component->angle);
+
+    cmp_write_str(context, "position", 8);
+    v2_serialize(context, &component->position);
+
+    cmp_write_str(context, "scale", 5);
+    v2_serialize(context, &component->scale);
 }
 
 

@@ -39,20 +39,19 @@ if __name__ == "__main__":
     for path in scenes:
         full_path = os.path.join(EDITOR_PATH, path)
 
-        print "%s\tstart" % full_path
+        print "start    %s" % full_path
         with open(full_path, "r+") as decompiled:
             scene = json.load(decompiled)
 
-        print "%s\tloaded" % full_path
+        print "pack     %s" % full_path
         map_types(scene['entities'], COMPONENT_TYPES)
         mp_scene = msgpack.packb(scene)
-        print "%s\tpacked" % full_path
 
         destination = os.path.join(SCENES_PATH, scene["path"])
+        print "writ     %s" % destination
         with open(destination, "w+b") as compiled:
             compiled.write(mp_scene)
 
-        print "%s\twritten" % destination
         print "-" * 4
     end = time.time()
     finish(start, end, len(scenes))

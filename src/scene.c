@@ -23,6 +23,7 @@ void scene_destroy(Scene* scene) {
     cpSpaceFree(scene->space);
     transformpool_destroy(scene->transforms);
     scriptpool_destroy(scene->scripts);
+    spritepool_destroy(scene->sprites);
     entitypool_destroy(scene->entities);
     free(scene);
 }
@@ -104,8 +105,13 @@ void scene_deserialize(Scene* scene, const char* path) {
                 Entity* entity = entitypool_add(scene->entities);
                 entity_deserialize(entity, scene, &context);
             }
+        } else if(strcmp("source", key) == 0) {
+            uint32_t source_len = 65;
+            char source[source_len];
+            cmp_read_str(&context, source, &source_len);
         }
     }
 
     fclose(file);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Scene %s loaded", path);
 }

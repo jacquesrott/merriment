@@ -99,7 +99,7 @@ void component_serialize(ComponentItem* component, Entity* entity, Scene* scene,
         case MESH:
             break;
         case SCRIPT:
-            scriptcomponent_serialize(component->id, context);
+            scriptcomponent_serialize(component->id, entity->L, context);
             break;
         default:
             break;

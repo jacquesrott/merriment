@@ -8,11 +8,16 @@
 
 static void pool_init(SpritePool* pool, unsigned int capacity) {
     pool->available = &pool->items[0];
+    pool->allocated = NULL;
     capacity = capacity - 1;
     int i;
     for(i = 0 ; i < capacity ; ++i) {
+        pool->items[i].pool.container = pool;
+        pool->items[i].pool.previous = NULL;
         pool->items[i].pool.next = &pool->items[i + 1];
     }
+    pool->items[capacity].pool.container = pool;
+    pool->items[capacity].pool.previous = NULL;
     pool->items[capacity].pool.next = NULL;
     pool->count = 0;
 }
@@ -21,8 +26,9 @@ static void pool_init(SpritePool* pool, unsigned int capacity) {
 void spritepool_destroy(SpritePool* pool) {
     SpriteComponent* item = pool->allocated;
     while(item) {
+        SpriteComponent* next = item->pool.next;
         spritecomponent_free_pool(item);
-        item = item->pool.next;
+        item = next;
     }
     free(pool);
 }
@@ -44,8 +50,9 @@ static void pool_set_available(SpritePool* pool, SpriteComponent* item) {
     SpriteComponent* previous = item->pool.previous;
     SpriteComponent* next = item->pool.next;
 
-    if(next) next->pool.previous = previous;
-    if(previous) previous->pool.next = next;
+    if(pool->allocated == item) pool->allocated = next;
+    if(next != NULL) next->pool.previous = previous;
+    if(previous != NULL) previous->pool.next = next;
 
     item->pool.next = pool->available;
     pool->available = item;
@@ -148,5 +155,6 @@ void spritecomponent_deserialize(Entity* entity, SpritePool* pool, cmp_ctx_t* co
     }
     Sprite* sprite = sprite_create(sprite_path);
     SpriteComponent* component = spritepool_add(pool, sprite, program);
-    componentlist_push(&entity->components, component, SPRITE, entity);
+    ComponentItem* item = componentlist_push(&entity->components, component, SPRITE, entity);
+    component->component = item;
 }

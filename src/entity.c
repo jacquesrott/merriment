@@ -12,8 +12,12 @@ static void pool_init(EntityPool* pool, unsigned int capacity) {
     capacity = capacity - 1;
     int i;
     for(i = 0 ; i < capacity ; ++i) {
+        pool->items[i].pool.container = pool;
+        pool->items[i].pool.previous = NULL;
         pool->items[i].pool.next = &pool->items[i + 1];
     }
+    pool->items[capacity].pool.container = pool;
+    pool->items[capacity].pool.previous = NULL;
     pool->items[capacity].pool.next = NULL;
     pool->count = 0;
 }
@@ -22,8 +26,9 @@ static void pool_init(EntityPool* pool, unsigned int capacity) {
 void entitypool_destroy(EntityPool* pool) {
     Entity* item = pool->allocated;
     while(item) {
+        Entity* next = item->pool.next;
         entity_destroy(item);
-        item = item->pool.next;
+        item = next;
     }
     free(pool);
 }
@@ -45,8 +50,9 @@ static void pool_set_available(EntityPool* pool, Entity* item) {
     Entity* previous = item->pool.previous;
     Entity* next = item->pool.next;
 
-    if(next) next->pool.previous = previous;
-    if(previous) previous->pool.next = next;
+    if(pool->allocated == item) pool->allocated = next;
+    if(next != NULL) next->pool.previous = previous;
+    if(previous != NULL) previous->pool.next = next;
 
     item->pool.next = pool->available;
     pool->available = item;
@@ -70,7 +76,10 @@ void* entitypool_add(EntityPool* pool) {
 
     item->L = luaL_newstate();
     luaL_openlibs(item->L);
-    luaopen_cmsgpack(item->L);
+
+    lua_pushcfunction(item->L, luaopen_cmsgpack);
+    lua_pushstring(item->L, "cmsgpack");
+    lua_call(item->L, 1, 0);
 
     item->components.head = NULL;
     item->components.count = 0;
@@ -129,7 +138,9 @@ void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
 
         if(strcmp("name", key) == 0) {
             uint32_t name_len = 65;
-            cmp_read_str(context, entity->name, &name_len);
+            char name[name_len];
+            cmp_read_str(context, name, &name_len);
+            entity->name = name;
         } else if(strcmp("components", key) == 0) {
             uint32_t components_size;
             cmp_read_array(context, &components_size);

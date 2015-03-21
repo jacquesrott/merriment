@@ -6,11 +6,16 @@
 
 static void pool_init(TransformPool* pool, unsigned int capacity) {
     pool->available = &pool->items[0];
+    pool->allocated = NULL;
     capacity = capacity - 1;
     int i;
     for(i = 0 ; i < capacity ; ++i) {
+        pool->items[i].pool.container = pool;
+        pool->items[i].pool.previous = NULL;
         pool->items[i].pool.next = &pool->items[i + 1];
     }
+    pool->items[capacity].pool.container = pool;
+    pool->items[capacity].pool.previous = NULL;
     pool->items[capacity].pool.next = NULL;
     pool->count = 0;
 }
@@ -19,8 +24,9 @@ static void pool_init(TransformPool* pool, unsigned int capacity) {
 void transformpool_destroy(TransformPool* pool) {
     TransformComponent* item = pool->allocated;
     while(item) {
+        TransformComponent* next = item->pool.next;
         transformcomponent_free_pool(item);
-        item = item->pool.next;
+        item = next;
     }
     free(pool);
 }
@@ -42,8 +48,9 @@ static void pool_set_available(TransformPool* pool, TransformComponent* item) {
     TransformComponent* previous = item->pool.previous;
     TransformComponent* next = item->pool.next;
 
-    if(next) next->pool.previous = previous;
-    if(previous) previous->pool.next = next;
+    if(pool->allocated == item) pool->allocated = next;
+    if(next != NULL) next->pool.previous = previous;
+    if(previous != NULL) previous->pool.next = next;
 
     item->pool.next = pool->available;
     pool->available = item;
@@ -83,13 +90,7 @@ void* transformpool_add(TransformPool* pool, vec2 position, float angle, vec2 sc
 
 
 void transformcomponent_free_pool(TransformComponent* item) {
-    transformcomponent_destroy(item);
     pool_set_available(item->pool.container, item);
-}
-
-
-void transformcomponent_destroy(TransformComponent* component) {
-    free(component);
 }
 
 
@@ -153,6 +154,7 @@ void transformcomponent_deserialize(Entity* entity, TransformPool* pool, cmp_ctx
         }
     }
 
-    TransformComponent* transform = transformpool_add(pool, position, angle, scale);
-    componentlist_push(&entity->components, transform, TRANSFORM, entity);
+    TransformComponent* component = transformpool_add(pool, position, angle, scale);
+    ComponentItem* item = componentlist_push(&entity->components, component, TRANSFORM, entity);
+    component->component = item;
 }

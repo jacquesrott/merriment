@@ -6,11 +6,16 @@
 
 static void pool_init(ScriptPool* pool, unsigned int capacity) {
     pool->available = &pool->items[0];
+    pool->allocated = NULL;
     capacity = capacity - 1;
     int i;
     for(i = 0 ; i < capacity ; ++i) {
+        pool->items[i].pool.container = pool;
+        pool->items[i].pool.previous = NULL;
         pool->items[i].pool.next = &pool->items[i + 1];
     }
+    pool->items[capacity].pool.container = pool;
+    pool->items[capacity].pool.previous = NULL;
     pool->items[capacity].pool.next = NULL;
     pool->count = 0;
 }
@@ -19,8 +24,9 @@ static void pool_init(ScriptPool* pool, unsigned int capacity) {
 void scriptpool_destroy(ScriptPool* pool) {
     ScriptComponent* item = pool->allocated;
     while(item) {
+        ScriptComponent* next = item->pool.next;
         scriptcomponent_free_pool(item);
-        item = item->pool.next;
+        item = next;
     }
     free(pool);
 }
@@ -42,8 +48,8 @@ static void pool_set_available(ScriptPool* pool, ScriptComponent* item) {
     ScriptComponent* previous = item->pool.previous;
     ScriptComponent* next = item->pool.next;
 
-    if(next) next->pool.previous = previous;
-    if(previous) previous->pool.next = next;
+    if(next != NULL) next->pool.previous = previous;
+    if(previous != NULL) previous->pool.next = next;
 
     item->pool.next = pool->available;
     pool->available = item;
@@ -161,7 +167,7 @@ void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* co
     uint32_t key_count;
     char key[32];
     uint32_t instance_len = 128;
-    char instance[instance_len];
+    char compiled_instance[instance_len];
     uint32_t key_len;
 
     cmp_read_map(context, &key_count);
@@ -177,11 +183,13 @@ void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* co
             cmp_read_str(context, script_path, &path_len);
             script_path[path_len] = 0;
         } else if(strcmp("instance", key) == 0) {
-            cmp_read_bin(context, instance, &instance_len);
+            cmp_read_bin(context, compiled_instance, &instance_len);
+            printf("compiled_instance %s - size %d\n", compiled_instance, instance_len);
         }
     }
 
     ScriptComponent* component = scriptpool_add(pool, entity->L, script_path);
-    componentlist_push(&entity->components, component, SCRIPT, entity);
-    script_deserialize(entity->L, component->instance, instance);
+    ComponentItem* item = componentlist_push(&entity->components, component, SCRIPT, entity);
+    component->component = item;
+    script_deserialize(entity->L, component->instance, compiled_instance);
 }

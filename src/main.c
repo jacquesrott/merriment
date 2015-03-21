@@ -6,14 +6,11 @@
 #include "game.h"
 #include "config.h"
 #include "almath.h"
-#include "shader.h"
 #include "texture.h"
+#include "shader.h"
 #include "buffer.h"
-#include "sprite.h"
 #include "planet.h"
 #include "timer.h"
-
-#include "entity.h"
 
 
 Game* galaczy;
@@ -32,14 +29,16 @@ int main() {
           bottom = -height / 2.0;
 
     mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
-    GLuint program = program_load("assets/shaders/vertex.vs", "assets/shaders/fragment.fs");
-    Sprite* sprite = sprite_create("assets/sprites/red_square.png");
 
-    GLuint umatrix_id = glGetUniformLocation(program, "MVP");
-    GLuint utexture_id = glGetUniformLocation(program, "texture_sampler");
+    game_init(galaczy);
 
-    Planet* planet = planet_create();
-    planet_generate(planet, galaczy->space);
+    ScriptComponent* script_component = galaczy->scene->scripts->allocated;
+    while(script_component) {
+        ScriptComponent* next = script_component->pool.next;
+        printf("NEXT %d - Script %d - test %d\n", next == NULL, script_component == NULL, 1 == 1);
+        scriptcomponent_init(script_component, script_component->component->entity->L);
+        script_component = next;
+    }
 
     int zoom = 0;
 
@@ -53,9 +52,6 @@ int main() {
                 case SDL_KEYUP:
                     switch (galaczy->event.key.keysym.sym) {
                         case SDLK_SPACE:
-                            planet_destroy(planet);
-                            planet = planet_create();
-                            planet_generate(planet, galaczy->space);
                             break;
                         default:
                             break;
@@ -85,24 +81,19 @@ int main() {
         while(game_is_synced(galaczy)) {
             game_step(galaczy);
         }
+        ScriptComponent* script = galaczy->scene->scripts->allocated;
+        while(script) {
+            ScriptComponent* next = script->pool.next;
+            scriptcomponent_update(script, script->component->entity->L);
+            script = next;
+        }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-        program_bind(program);
-
-        sprite_draw(sprite, &view, umatrix_id, utexture_id);
-        mesh_draw(planet->mesh, &view, umatrix_id);
-
-        buffer_unbind();
-        texture_unbind();
-        program_unbind();
 
         SDL_GL_SwapWindow(galaczy->window);
     }
 
-    program_destroy(program);
-    sprite_destroy(sprite);
-    planet_destroy(planet);
+    scene_serialize(galaczy->scene, "assets/test.mp");
 
     game_destroy(galaczy);
 

@@ -112,6 +112,21 @@ void scriptcomponent_finish(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "finish");
 }
 
+void script_serialize(lua_State* L, const char* instance, const char* serialized, unsigned int* size) {
+    lua_getglobal(L, instance);
+    lua_getglobal(L, "serialize");
+    lua_pushvalue(L, -2);
+
+    if(lua_pcall(L, 1, 1, 0)) {
+        SDL_LogError(
+            SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `deserialize` with instance %s and content `%s` : %s\n",
+            instance, serialized, lua_tostring(L, -1));
+    }
+    serialized = lua_tostring(L, -1);
+    *size = lua_strlen(L, -1);
+    lua_pop(L, 1);
+}
+
 
 void script_deserialize(lua_State* L, const char* instance, const char* serialized) {
     lua_getglobal(L, instance);
@@ -124,6 +139,20 @@ void script_deserialize(lua_State* L, const char* instance, const char* serializ
             SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `deserialize` with instance %s and content `%s` : %s\n",
             instance, serialized, lua_tostring(L, -1));
     }
+}
+
+
+void scriptcomponent_serialize(ScriptComponent* component, lua_State* L, cmp_ctx_t* context) {
+    cmp_write_map(context, 2);
+
+    cmp_write_str(context, "path", 4);
+    cmp_write_str(context, component->path, strlen(component->path));
+
+    cmp_write_str(context, "instance", 4);
+    char serialized[128];
+    unsigned int size;
+    script_serialize(L, component->instance, serialized, &size);
+    cmp_write_bin(context, serialized, size);
 }
 
 

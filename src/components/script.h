@@ -40,6 +40,7 @@ void scriptcomponent_init(ScriptComponent* component, lua_State* L);
 void scriptcomponent_update(ScriptComponent* component, lua_State* L);
 void scriptcomponent_finish(ScriptComponent* component, lua_State* L);
 void scriptcomponent_destroy(ScriptComponent* component);
+void scriptcomponent_serialize(ScriptComponent* component, lua_State* L, cmp_ctx_t* context);
 void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* context);
 
 #endif

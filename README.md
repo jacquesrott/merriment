@@ -52,6 +52,8 @@ Space exploration and identity seeking.
 
 ### Abandonned spaceships
 
+* Rotating gravity
+
 ### Space stations
 
 ### Animals on planet

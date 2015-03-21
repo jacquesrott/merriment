@@ -12,6 +12,9 @@
 #define DW_PLANET_RADIUS_DIFF 15.0
 
 
+#define DW_DEFAULT_SCENE "assets/scenes/scene.mp"
+
+
 #define MAX_COMPONENTS 32
 #define MAX_ENTITIES 128
 #define MAX_SCRIPTS MAX_ENTITIES * 2

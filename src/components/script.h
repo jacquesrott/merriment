@@ -17,7 +17,7 @@ typedef struct {
     PoolItem pool;
 
     ComponentItem* component;
-    const char* path;
+    char* path;
     const char* instance;
 } ScriptComponent;
 

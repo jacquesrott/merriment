@@ -72,23 +72,32 @@ ScriptComponent* scriptpool_add(ScriptPool* pool, lua_State* L, const char* path
     }
 
     item->component = NULL;
-    item->path = path;
+    item->path = malloc(sizeof(path));
+    strcpy(item->path, path);
     int status = luaL_loadfile(L, path);
     status |= lua_pcall(L, 0, 0, 0);
     if(status) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load file: %s\n", lua_tostring(L, -1));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load file %s: %s\n", path, lua_tostring(L, -1));
     }
 
     lua_getglobal(L, "instance");
     item->instance = lua_tostring(L, -1);
     lua_pop(L, 1);
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Script `%s` loaded.\n", path);
+
     return item;
 }
 
 
 void scriptcomponent_free_pool(ScriptComponent* item) {
+    scriptcomponent_destroy(item);
     pool_set_available(item->pool.container, item);
+}
+
+
+void scriptcomponent_destroy(ScriptComponent* item) {
+    free(item->path);
 }
 
 
@@ -118,27 +127,29 @@ void scriptcomponent_finish(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "finish");
 }
 
-void script_serialize(lua_State* L, const char* instance, const char* serialized, unsigned int* size) {
+char* script_serialize(lua_State* L, const char* instance, size_t* size) {
     lua_getglobal(L, instance);
     lua_getglobal(L, "serialize");
     lua_pushvalue(L, -2);
 
     if(lua_pcall(L, 1, 1, 0)) {
         SDL_LogError(
-            SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `deserialize` with instance %s and content `%s` : %s\n",
-            instance, serialized, lua_tostring(L, -1));
+            SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `serialize` instance %s : %s\n",
+            instance, lua_tostring(L, -1));
     }
-    serialized = lua_tostring(L, -1);
     *size = lua_strlen(L, -1);
+    char* serialized = malloc(sizeof(char) * (*size));
+    serialized = (char*) lua_tostring(L, -1);
     lua_pop(L, 1);
+    return serialized;
 }
 
 
-void script_deserialize(lua_State* L, const char* instance, const char* serialized) {
+void script_deserialize(lua_State* L, const char* instance, const char* serialized, size_t size) {
     lua_getglobal(L, instance);
     lua_getglobal(L, "deserialize");
     lua_pushvalue(L, -2);
-    lua_pushstring(L, serialized);
+    lua_pushlstring(L, serialized, size);
 
     if(lua_pcall(L, 2, 0, 0)) {
         SDL_LogError(
@@ -154,19 +165,20 @@ void scriptcomponent_serialize(ScriptComponent* component, lua_State* L, cmp_ctx
     cmp_write_str(context, "path", 4);
     cmp_write_str(context, component->path, strlen(component->path));
 
-    cmp_write_str(context, "instance", 4);
-    char serialized[128];
-    unsigned int size;
-    script_serialize(L, component->instance, serialized, &size);
-    cmp_write_bin(context, serialized, size);
+    cmp_write_str(context, "instance", 8);
+    size_t size;
+    char* serialized = script_serialize(L, component->instance, &size);
+    cmp_write_str(context, (char*) serialized, size);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Script `%s` serialized.\n", component->path);
 }
 
 
 void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* context) {
-    char script_path[64];
+    uint32_t path_len = 65;
+    char script_path[path_len];
     uint32_t key_count;
     char key[32];
-    uint32_t instance_len = 128;
+    uint32_t instance_len = 256;
     char compiled_instance[instance_len];
     uint32_t key_len;
 
@@ -179,17 +191,18 @@ void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* co
         key[key_len] = 0;
 
         if(strcmp("path", key) == 0) {
-            uint32_t path_len = 65;
             cmp_read_str(context, script_path, &path_len);
             script_path[path_len] = 0;
         } else if(strcmp("instance", key) == 0) {
-            cmp_read_bin(context, compiled_instance, &instance_len);
-            printf("compiled_instance %s - size %d\n", compiled_instance, instance_len);
+            cmp_read_str(context, compiled_instance, &instance_len);
         }
     }
 
     ScriptComponent* component = scriptpool_add(pool, entity->L, script_path);
     ComponentItem* item = componentlist_push(&entity->components, component, SCRIPT, entity);
     component->component = item;
-    script_deserialize(entity->L, component->instance, compiled_instance);
+    scriptcomponent_init(component, entity->L);
+    if(instance_len > 1) {
+        script_deserialize(entity->L, component->instance, compiled_instance, instance_len);
+    }
 }

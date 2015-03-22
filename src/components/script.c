@@ -106,6 +106,7 @@ static void script_run_method(lua_State* L, const char* instance, const char* na
             SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `%s` for %s: %s\n",
             name, instance, lua_tostring(L, -1));
     }
+    lua_pop(L, 1);
 }
 
 
@@ -138,7 +139,7 @@ void script_serialize(lua_State* L, const char* instance, cmp_ctx_t* context) {
     memcpy(serialized, lua_tostring(L, -1), size);
 
     cmp_write_str(context, (char*) serialized, size);
-    lua_pop(L, 1);
+    lua_pop(L, 3);
 }
 
 
@@ -153,6 +154,7 @@ void script_deserialize(lua_State* L, const char* instance, const char* serializ
             SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `deserialize` with instance %s and content `%s` : %s\n",
             instance, serialized, lua_tostring(L, -1));
     }
+    lua_pop(L, 2);
 }
 
 

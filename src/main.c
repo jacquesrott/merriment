@@ -1,6 +1,10 @@
 #include <SDL2/SDL.h>
 #include <OpenGL/gl3.h>
 #include <stdio.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <chipmunk/chipmunk.h>
 
 #include "game.h"
@@ -16,7 +20,22 @@
 Game* galaczy;
 
 
+void handler(int sig) {
+    void *array[10];
+    size_t size;
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 10);
+
+    // print out all the frames to stderr
+    fprintf(stderr, "Error: signal %d:\n", sig);
+    backtrace_symbols_fd(array, size, STDERR_FILENO);
+    exit(EXIT_FAILURE);
+}
+
+
 int main() {
+    signal(SIGSEGV, handler);
     int width = 1440, height = 900;
 
     galaczy = game_create(width, height);

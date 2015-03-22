@@ -22,7 +22,7 @@ struct Scene {
 //    PhysicPool* physics;
 //    MeshPool* meshes;
     SpritePool* sprites;
-    char* path;
+    char path[64];
 };
 
 

@@ -61,7 +61,7 @@ void scene_serialize(Scene* scene, const char* path) {
 
     cmp_write_str(&context, "entities", 8);
     cmp_write_array(&context, scene->entities->count);
-    Entity* entity = scene->entities->available;
+    Entity* entity = scene->entities->allocated;
 
     while(entity != NULL) {
         entity_serialize(entity, scene, &context);
@@ -69,6 +69,7 @@ void scene_serialize(Scene* scene, const char* path) {
     }
 
     fclose(file);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Scene `%s` serialized.\n", scene->path);
 }
 
 
@@ -96,6 +97,7 @@ void scene_deserialize(Scene* scene, const char* path) {
         if(strcmp("path", key) == 0) {
             uint32_t path_len = 65;
             cmp_read_str(&context, scene->path, &path_len);
+            scene->path[path_len] = 0;
         } else if (strcmp("entities", key) == 0) {
             uint32_t entities_size;
             cmp_read_array(&context, &entities_size);
@@ -113,5 +115,5 @@ void scene_deserialize(Scene* scene, const char* path) {
     }
 
     fclose(file);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Scene %s loaded", path);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Scene %s loaded.\n", path);
 }

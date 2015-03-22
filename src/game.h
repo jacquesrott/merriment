@@ -24,5 +24,6 @@ void game_destroy(Game* game);
 void game_init(Game* game);
 int game_is_synced(Game* game);
 void game_step(Game* game);
+void game_reload(Game* game, const char* tmp_path);
 
 #endif

@@ -33,13 +33,12 @@ Sprite* sprite_create(const char* texture_path) {
         return NULL;
     }
 
-    sprite->texture = texture_load(texture_path);
+    strcpy(sprite->path, texture_path);
+
+    sprite->texture = texture_load(sprite->path);
     sprite->width = texture_get_param(sprite->texture, GL_TEXTURE_WIDTH);
     sprite->height = texture_get_param(sprite->texture, GL_TEXTURE_HEIGHT);
     sprite->transform = m4_identity();
-
-    sprite->path = malloc(sizeof(texture_path));
-    strcpy(sprite->path, texture_path);
 
     vec3 vertices[num_vertices];
     vec3 scale = {sprite->width, sprite->height, 1};
@@ -86,6 +85,5 @@ void sprite_destroy(Sprite* sprite) {
     for(i = 0; i < NB_VERTEX_ATTRIB; ++i) {
         buffer_destroy(sprite->attributes[i].buffer);
     }
-    free(sprite->path);
     free(sprite);
 }

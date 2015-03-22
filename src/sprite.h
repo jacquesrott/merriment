@@ -11,7 +11,7 @@ typedef struct {
     int width, height;
     mat4 transform;
     VertexAttrib attributes[NB_VERTEX_ATTRIB];
-    char* path;
+    char path[128];
 } Sprite;
 
 

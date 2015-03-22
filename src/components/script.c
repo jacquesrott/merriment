@@ -72,32 +72,27 @@ ScriptComponent* scriptpool_add(ScriptPool* pool, lua_State* L, const char* path
     }
 
     item->component = NULL;
-    item->path = malloc(sizeof(path));
+
     strcpy(item->path, path);
-    int status = luaL_loadfile(L, path);
+
+    int status = luaL_loadfile(L, item->path);
     status |= lua_pcall(L, 0, 0, 0);
     if(status) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load file %s: %s\n", path, lua_tostring(L, -1));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load file %s: %s\n", item->path, lua_tostring(L, -1));
     }
 
     lua_getglobal(L, "instance");
     item->instance = lua_tostring(L, -1);
     lua_pop(L, 1);
 
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Script `%s` loaded.\n", path);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Script `%s` loaded.\n", item->path);
 
     return item;
 }
 
 
 void scriptcomponent_free_pool(ScriptComponent* item) {
-    scriptcomponent_destroy(item);
     pool_set_available(item->pool.container, item);
-}
-
-
-void scriptcomponent_destroy(ScriptComponent* item) {
-    free(item->path);
 }
 
 
@@ -127,7 +122,8 @@ void scriptcomponent_finish(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "finish");
 }
 
-char* script_serialize(lua_State* L, const char* instance, size_t* size) {
+
+void script_serialize(lua_State* L, const char* instance, cmp_ctx_t* context) {
     lua_getglobal(L, instance);
     lua_getglobal(L, "serialize");
     lua_pushvalue(L, -2);
@@ -137,11 +133,12 @@ char* script_serialize(lua_State* L, const char* instance, size_t* size) {
             SDL_LOG_CATEGORY_APPLICATION, "Couldn't run `serialize` instance %s : %s\n",
             instance, lua_tostring(L, -1));
     }
-    *size = lua_strlen(L, -1);
-    char* serialized = malloc(sizeof(char) * (*size));
-    serialized = (char*) lua_tostring(L, -1);
+    size_t size = lua_strlen(L, -1);
+    char serialized[size];
+    memcpy(serialized, lua_tostring(L, -1), size);
+
+    cmp_write_str(context, (char*) serialized, size);
     lua_pop(L, 1);
-    return serialized;
 }
 
 
@@ -166,9 +163,7 @@ void scriptcomponent_serialize(ScriptComponent* component, lua_State* L, cmp_ctx
     cmp_write_str(context, component->path, strlen(component->path));
 
     cmp_write_str(context, "instance", 8);
-    size_t size;
-    char* serialized = script_serialize(L, component->instance, &size);
-    cmp_write_str(context, (char*) serialized, size);
+    script_serialize(L, component->instance, context);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Script `%s` serialized.\n", component->path);
 }
 

@@ -32,14 +32,6 @@ int main() {
 
     game_init(galaczy);
 
-    ScriptComponent* script_component = galaczy->scene->scripts->allocated;
-    while(script_component) {
-        ScriptComponent* next = script_component->pool.next;
-        printf("NEXT %d - Script %d - test %d\n", next == NULL, script_component == NULL, 1 == 1);
-        scriptcomponent_init(script_component, script_component->component->entity->L);
-        script_component = next;
-    }
-
     int zoom = 0;
 
     while(galaczy->run == 0) {

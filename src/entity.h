@@ -29,7 +29,7 @@ struct Entity {
     lua_State* L;
 
     ComponentList components;
-    char* name;
+    char name[32];
 };
 
 

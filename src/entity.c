@@ -3,7 +3,6 @@
 
 #include "entity.h"
 #include "pool.h"
-#include "lua_cmsgpack.h"
 
 
 static void pool_init(EntityPool* pool, unsigned int capacity) {
@@ -77,10 +76,6 @@ void* entitypool_add(EntityPool* pool) {
     item->L = luaL_newstate();
     luaL_openlibs(item->L);
 
-    lua_pushcfunction(item->L, luaopen_cmsgpack);
-    lua_pushstring(item->L, "cmsgpack");
-    lua_call(item->L, 1, 0);
-
     item->components.head = NULL;
     item->components.count = 0;
 
@@ -120,6 +115,7 @@ void entity_serialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
         component_serialize(component, entity, scene, context);
         component = component->next;
     }
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Entity `%s` serialized.\n", entity->name);
 }
 
 
@@ -138,9 +134,8 @@ void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
 
         if(strcmp("name", key) == 0) {
             uint32_t name_len = 65;
-            char name[name_len];
-            cmp_read_str(context, name, &name_len);
-            entity->name = name;
+            cmp_read_str(context, entity->name, &name_len);
+            entity->name[name_len] = 0;
         } else if(strcmp("components", key) == 0) {
             uint32_t components_size;
             cmp_read_array(context, &components_size);
@@ -151,4 +146,5 @@ void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context) {
             }
         }
     }
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Entity `%s` deserialized.\n", entity->name);
 }

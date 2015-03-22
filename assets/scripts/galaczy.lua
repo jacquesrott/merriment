@@ -1,16 +1,14 @@
-local ffi = require 'ffi'
-local cmsgpack = require "cmsgpack"
-
-gz = setmetatable({}, {__index = ffi.C})
-
-gz.string = ffi.string
-
+local msgpack = require "assets/scripts/msgpack"
 
 function serialize(instance)
-    return cmsgpack.pack(instance)
+    compiled = msgpack.pack(instance)
+    return compiled
 end
 
 
 function deserialize(instance, compiled)
-    instance = cmsgpack.unpack(compiled)
+    decompiled = msgpack.unpack(compiled)
+    for k, v in pairs(decompiled) do
+        instance[k] = v
+    end
 end

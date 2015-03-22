@@ -131,7 +131,8 @@ static void program_deserialize(cmp_ctx_t* context, GLuint* program) {
 
 
 void spritecomponent_deserialize(Entity* entity, SpritePool* pool, cmp_ctx_t* context) {
-    char sprite_path[64];
+    uint32_t path_len = 65;
+    char sprite_path[path_len];
     GLuint program;
     uint32_t key_count;
     char key[32];
@@ -146,7 +147,6 @@ void spritecomponent_deserialize(Entity* entity, SpritePool* pool, cmp_ctx_t* co
         key[key_len] = 0;
 
         if(strcmp("sprite", key) == 0) {
-            uint32_t path_len = 65;
             cmp_read_str(context, sprite_path, &path_len);
             sprite_path[path_len] = 0;
         } else if (strcmp("program", key) == 0) {

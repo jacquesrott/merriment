@@ -43,7 +43,8 @@ int main() {
                     break;
                 case SDL_KEYUP:
                     switch (galaczy->event.key.keysym.sym) {
-                        case SDLK_SPACE:
+                        case SDLK_BACKSPACE:
+                            game_reload(galaczy, "tmp/scene-save.mp");
                             break;
                         default:
                             break;
@@ -73,6 +74,7 @@ int main() {
         while(game_is_synced(galaczy)) {
             game_step(galaczy);
         }
+
         ScriptComponent* script = galaczy->scene->scripts->allocated;
         while(script) {
             ScriptComponent* next = script->pool.next;
@@ -84,8 +86,6 @@ int main() {
 
         SDL_GL_SwapWindow(galaczy->window);
     }
-
-    scene_serialize(galaczy->scene, "assets/test.mp");
 
     game_destroy(galaczy);
 

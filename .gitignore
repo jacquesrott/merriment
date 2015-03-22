@@ -1,5 +1,6 @@
 bin
 build
+tmp
 .sconsign.dblite
 *.pyc
 *.o

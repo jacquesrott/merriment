@@ -5,6 +5,7 @@
 
 typedef struct Scene Scene;
 
+#include "pool.h"
 #include "entity.h"
 #include "components/script.h"
 #include "components/transform.h"
@@ -15,13 +16,13 @@ struct Scene {
 //    Camera camera;
     cpSpace* space;
 
-    EntityPool* entities;
+    Pool* entities;
 
-    TransformPool* transforms;
-    ScriptPool* scripts;
+    Pool* transforms;
+    Pool* scripts;
 //    PhysicPool* physics;
 //    MeshPool* meshes;
-    SpritePool* sprites;
+    Pool* sprites;
     char path[64];
 };
 

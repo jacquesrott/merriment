@@ -1,8 +1,6 @@
 #ifndef DW_SPRITE_COMPONENT_H
 #define DW_SPRITE_COMPONENT_H
 
-typedef struct SpritePool SpritePool;
-
 #include "../config.h"
 #include "../sprite.h"
 #include "../shader.h"
@@ -19,22 +17,12 @@ typedef struct {
 } SpriteComponent;
 
 
-struct SpritePool {
-    SpriteComponent items[MAX_RENDERERS];
-    SpriteComponent* allocated;
-    SpriteComponent* available;
-    unsigned int count;
-};
+Pool* spritepool_create();
+void* spritepool_add(Pool* pool, Sprite* sprite, GLuint program);
 
-
-SpritePool* spritepool_create();
-void* spritepool_add(SpritePool* pool, Sprite* sprite, GLuint program);
-void spritepool_destroy(SpritePool* pool);
-
-void spritecomponent_free_pool(SpriteComponent* item);
 void spritecomponent_destroy(SpriteComponent* component);
 void spritecomponent_serialize(SpriteComponent* component, cmp_ctx_t* context);
-void spritecomponent_deserialize(Entity* entity, SpritePool* pool, cmp_ctx_t* context);
+void spritecomponent_deserialize(Entity* entity, Pool* pool, cmp_ctx_t* context);
 
 
 #endif

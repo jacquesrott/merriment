@@ -4,64 +4,12 @@
 #include "transform.h"
 
 
-static void pool_init(TransformPool* pool, unsigned int capacity) {
-    pool->available = &pool->items[0];
-    pool->allocated = NULL;
-    capacity = capacity - 1;
-    int i;
-    for(i = 0 ; i < capacity ; ++i) {
-        pool->items[i].pool.container = pool;
-        pool->items[i].pool.previous = NULL;
-        pool->items[i].pool.next = &pool->items[i + 1];
-    }
-    pool->items[capacity].pool.container = pool;
-    pool->items[capacity].pool.previous = NULL;
-    pool->items[capacity].pool.next = NULL;
-    pool->count = 0;
-}
-
-
-void transformpool_destroy(TransformPool* pool) {
-    TransformComponent* item = pool->allocated;
-    while(item) {
-        TransformComponent* next = item->pool.next;
-        transformcomponent_free_pool(item);
-        item = next;
-    }
-    free(pool);
-}
-
-
-static TransformComponent* pool_pop_available(TransformPool* pool) {
-    TransformComponent* item = pool->available;
-    pool->available = item->pool.next;
-
-    item->pool.next = pool->allocated;
-    pool->allocated = item;
-    item->pool.previous = NULL;
-    ++pool->count;
-    return item;
-}
-
-
-static void pool_set_available(TransformPool* pool, TransformComponent* item) {
-    TransformComponent* previous = item->pool.previous;
-    TransformComponent* next = item->pool.next;
-
-    if(pool->allocated == item) pool->allocated = next;
-    if(next != NULL) next->pool.previous = previous;
-    if(previous != NULL) previous->pool.next = next;
-
-    item->pool.next = pool->available;
-    pool->available = item;
-    --pool->count;
-}
-
-
-TransformPool* transformpool_create() {
-    TransformPool* pool = malloc(sizeof(*pool));
-    pool_init(pool, MAX_TRANSFORMS);
-    return pool;
+Pool* transformpool_create() {
+    unsigned int item_size = sizeof(TransformComponent);
+    return pool_create(
+        item_size,
+        MAX_TRANSFORMS,
+        (void (*)(void*)) transformcomponent_destroy);
 }
 
 
@@ -72,7 +20,7 @@ static void transformcomponent_refresh(TransformComponent* component) {
 }
 
 
-void* transformpool_add(TransformPool* pool, vec2 position, float angle, vec2 scale) {
+void* transformpool_add(Pool* pool, vec2 position, float angle, vec2 scale) {
     TransformComponent* item = pool_pop_available(pool);
     if(item == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TransformPool stack overflow.\n");
@@ -89,8 +37,8 @@ void* transformpool_add(TransformPool* pool, vec2 position, float angle, vec2 sc
 }
 
 
-void transformcomponent_free_pool(TransformComponent* item) {
-    pool_set_available(item->pool.container, item);
+void transformcomponent_destroy(TransformComponent* component) {
+    pool_set_available(component->pool.container, (PoolObject*) component);
 }
 
 
@@ -128,7 +76,7 @@ void transformcomponent_serialize(TransformComponent* component, cmp_ctx_t* cont
 }
 
 
-void transformcomponent_deserialize(Entity* entity, TransformPool* pool, cmp_ctx_t* context) {
+void transformcomponent_deserialize(Entity* entity, Pool* pool, cmp_ctx_t* context) {
     vec2 position = {0, 0};
     float angle = 0.0;
     vec2 scale = {1, 1};

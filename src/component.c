@@ -64,15 +64,15 @@ void component_free(ComponentItem* item) {
         case PHYSIC:
             break;
         case TRANSFORM:
-            transformcomponent_free_pool(item->id);
+            transformcomponent_destroy(item->id);
             break;
         case SPRITE:
-            spritecomponent_free_pool(item->id);
+            spritecomponent_destroy(item->id);
             break;
         case MESH:
             break;
         case SCRIPT:
-            scriptcomponent_free_pool(item->id);
+            scriptcomponent_destroy(item->id);
             break;
         default:
             break;

@@ -1,8 +1,6 @@
 #ifndef DW_TRANSFORM_COMPONENT_H
 #define DW_TRANSFORM_COMPONENT_H
 
-typedef struct TransformPool TransformPool;
-
 #include "../config.h"
 #include "../pool.h"
 #include "../almath.h"
@@ -21,22 +19,12 @@ typedef struct {
 } TransformComponent;
 
 
-struct TransformPool {
-    TransformComponent items[MAX_TRANSFORMS];
-    TransformComponent* allocated;
-    TransformComponent* available;
-    unsigned int count;
-};
+Pool* transformpool_create();
+void* transformpool_add(Pool* pool, vec2 position, float angle, vec2 scale);
 
-
-TransformPool* transformpool_create();
-void* transformpool_add(TransformPool* pool, vec2 position, float angle, vec2 scale);
-void transformpool_destroy(TransformPool* pool);
-
-void transformcomponent_free_pool(TransformComponent* item);
 void transformcomponent_destroy(TransformComponent* component);
 void transformcomponent_serialize(TransformComponent* component, cmp_ctx_t* context);
-void transformcomponent_deserialize(Entity* entity, TransformPool* pool, cmp_ctx_t* context);
+void transformcomponent_deserialize(Entity* entity, Pool* pool, cmp_ctx_t* context);
 
 
 #endif

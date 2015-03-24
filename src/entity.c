@@ -5,68 +5,16 @@
 #include "pool.h"
 
 
-static void pool_init(EntityPool* pool, unsigned int capacity) {
-    pool->available = &pool->items[0];
-    pool->allocated = NULL;
-    capacity = capacity - 1;
-    int i;
-    for(i = 0 ; i < capacity ; ++i) {
-        pool->items[i].pool.container = pool;
-        pool->items[i].pool.previous = NULL;
-        pool->items[i].pool.next = &pool->items[i + 1];
-    }
-    pool->items[capacity].pool.container = pool;
-    pool->items[capacity].pool.previous = NULL;
-    pool->items[capacity].pool.next = NULL;
-    pool->count = 0;
+Pool* entitypool_create() {
+    unsigned int item_size = sizeof(Entity);
+    return pool_create(
+        item_size,
+        MAX_ENTITIES,
+        (void (*)(void*)) entity_destroy);
 }
 
 
-void entitypool_destroy(EntityPool* pool) {
-    Entity* item = pool->allocated;
-    while(item) {
-        Entity* next = item->pool.next;
-        entity_destroy(item);
-        item = next;
-    }
-    free(pool);
-}
-
-
-static Entity* pool_pop_available(EntityPool* pool) {
-    Entity* item = pool->available;
-    pool->available = item->pool.next;
-
-    item->pool.next = pool->allocated;
-    pool->allocated = item;
-    item->pool.previous = NULL;
-    ++pool->count;
-    return item;
-}
-
-
-static void pool_set_available(EntityPool* pool, Entity* item) {
-    Entity* previous = item->pool.previous;
-    Entity* next = item->pool.next;
-
-    if(pool->allocated == item) pool->allocated = next;
-    if(next != NULL) next->pool.previous = previous;
-    if(previous != NULL) previous->pool.next = next;
-
-    item->pool.next = pool->available;
-    pool->available = item;
-    --pool->count;
-}
-
-
-EntityPool* entitypool_create() {
-    EntityPool* pool = malloc(sizeof(*pool));
-    pool_init(pool, MAX_ENTITIES);
-    return pool;
-}
-
-
-void* entitypool_add(EntityPool* pool) {
+void* entitypool_add(Pool* pool) {
     Entity* item = pool_pop_available(pool);
     if(item == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "EntityPool stack overflow.\n");
@@ -88,15 +36,10 @@ void entity_free(Entity* entity) {
 }
 
 
-void entity_free_pool(Entity* item) {
-    entity_free(item);
-    entity_destroy(item);
-    pool_set_available(item->pool.container, item);
-}
-
-
 void entity_destroy(Entity* entity) {
+    componentlist_clear(&entity->components);
     lua_close(entity->L);
+    pool_set_available(entity->pool.container, (PoolObject*) entity);
 }
 
 

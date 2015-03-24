@@ -4,67 +4,16 @@
 #include "script.h"
 
 
-static void pool_init(ScriptPool* pool, unsigned int capacity) {
-    pool->available = &pool->items[0];
-    pool->allocated = NULL;
-    capacity = capacity - 1;
-    int i;
-    for(i = 0 ; i < capacity ; ++i) {
-        pool->items[i].pool.container = pool;
-        pool->items[i].pool.previous = NULL;
-        pool->items[i].pool.next = &pool->items[i + 1];
-    }
-    pool->items[capacity].pool.container = pool;
-    pool->items[capacity].pool.previous = NULL;
-    pool->items[capacity].pool.next = NULL;
-    pool->count = 0;
+Pool* scriptpool_create() {
+    unsigned int item_size = sizeof(ScriptComponent);
+    return pool_create(
+        item_size,
+        MAX_SCRIPTS,
+        (void (*)(void*)) scriptcomponent_destroy);
 }
 
 
-void scriptpool_destroy(ScriptPool* pool) {
-    ScriptComponent* item = pool->allocated;
-    while(item) {
-        ScriptComponent* next = item->pool.next;
-        scriptcomponent_free_pool(item);
-        item = next;
-    }
-    free(pool);
-}
-
-
-static ScriptComponent* pool_pop_available(ScriptPool* pool) {
-    ScriptComponent* item = pool->available;
-    pool->available = item->pool.next;
-
-    item->pool.next = pool->allocated;
-    pool->allocated = item;
-    item->pool.previous = NULL;
-    ++pool->count;
-    return item;
-}
-
-
-static void pool_set_available(ScriptPool* pool, ScriptComponent* item) {
-    ScriptComponent* previous = item->pool.previous;
-    ScriptComponent* next = item->pool.next;
-
-    if(next != NULL) next->pool.previous = previous;
-    if(previous != NULL) previous->pool.next = next;
-
-    item->pool.next = pool->available;
-    pool->available = item;
-    --pool->count;
-}
-
-
-ScriptPool* scriptpool_create() {
-    ScriptPool* pool = malloc(sizeof(*pool));
-    pool_init(pool, MAX_SCRIPTS);
-    return pool;
-}
-
-
-ScriptComponent* scriptpool_add(ScriptPool* pool, lua_State* L, const char* path) {
+ScriptComponent* scriptpool_add(Pool* pool, lua_State* L, const char* path) {
     ScriptComponent* item = pool_pop_available(pool);
     if(item == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "ScriptPool stack overflow.\n");
@@ -91,8 +40,8 @@ ScriptComponent* scriptpool_add(ScriptPool* pool, lua_State* L, const char* path
 }
 
 
-void scriptcomponent_free_pool(ScriptComponent* item) {
-    pool_set_available(item->pool.container, item);
+void scriptcomponent_destroy(ScriptComponent* item) {
+    pool_set_available(item->pool.container, (PoolObject*) item);
 }
 
 
@@ -118,6 +67,7 @@ void scriptcomponent_init(ScriptComponent* component, lua_State* L) {
 void scriptcomponent_update(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "update");
 }
+
 
 void scriptcomponent_finish(ScriptComponent* component, lua_State* L) {
     script_run_method(L, component->instance, "finish");
@@ -170,7 +120,7 @@ void scriptcomponent_serialize(ScriptComponent* component, lua_State* L, cmp_ctx
 }
 
 
-void scriptcomponent_deserialize(Entity* entity, ScriptPool* pool, cmp_ctx_t* context) {
+void scriptcomponent_deserialize(Entity* entity, Pool* pool, cmp_ctx_t* context) {
     uint32_t path_len = 65;
     char script_path[path_len];
     uint32_t key_count;

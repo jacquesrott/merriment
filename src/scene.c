@@ -21,10 +21,10 @@ Scene* scene_create() {
 
 void scene_destroy(Scene* scene) {
     cpSpaceFree(scene->space);
-    transformpool_destroy(scene->transforms);
-    scriptpool_destroy(scene->scripts);
-    spritepool_destroy(scene->sprites);
-    entitypool_destroy(scene->entities);
+    pool_destroy(scene->transforms);
+    pool_destroy(scene->scripts);
+    pool_destroy(scene->sprites);
+    pool_destroy(scene->entities);
     free(scene);
 }
 
@@ -42,7 +42,6 @@ static bool file_reader(cmp_ctx_t *ctx, void *data, size_t limit) {
 static size_t file_writer(cmp_ctx_t *ctx, const void *data, size_t count) {
     return fwrite(data, sizeof(uint8_t), count, (FILE *)ctx->buf);
 }
-
 
 
 void scene_serialize(Scene* scene, const char* path) {

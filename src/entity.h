@@ -7,7 +7,6 @@
 #include <lualib.h>
 
 typedef struct Entity Entity;
-typedef struct EntityPool EntityPool;
 
 #include "almath.h"
 #include "component.h"
@@ -33,18 +32,8 @@ struct Entity {
 };
 
 
-struct EntityPool {
-    Entity items[MAX_ENTITIES];
-    Entity* allocated;
-    Entity* available;
-    unsigned int count;
-};
-
-
-EntityPool* entitypool_create();
-void* entitypool_add(EntityPool* pool);
-void entitypool_destroy(EntityPool* pool);
-void entity_free_pool(Entity* item);
+Pool* entitypool_create();
+void* entitypool_add(Pool* pool);
 void entity_destroy(Entity* entity);
 void entity_serialize(Entity* entity, Scene* scene, cmp_ctx_t* context);
 void entity_deserialize(Entity* entity, Scene* scene, cmp_ctx_t* context);

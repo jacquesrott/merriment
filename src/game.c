@@ -31,7 +31,7 @@ Game* game_create(int width, int height) {
 
 
 void game_init(Game* game) {
-    scene_deserialize(game->scene, DW_DEFAULT_SCENE);
+    scene_load(game->scene, DW_DEFAULT_SCENE);
 }
 
 
@@ -47,10 +47,10 @@ void game_step(Game* game) {
 
 
 void game_reload(Game* game, const char* tmp_path) {
-    scene_serialize(game->scene, tmp_path);
+    scene_save(game->scene, tmp_path);
     scene_destroy(game->scene);
     game->scene = scene_create();
-    scene_deserialize(game->scene, tmp_path);
+    scene_load(game->scene, tmp_path);
 }
 
 

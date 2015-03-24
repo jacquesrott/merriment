@@ -29,8 +29,10 @@ struct Scene {
 
 Scene* scene_create();
 void scene_destroy(Scene* scene);
-void scene_serialize(Scene* scene, const char* path);
-void scene_deserialize(Scene* scene, const char* path);
+void scene_save(Scene* scene, const char* path);
+void scene_serialize(Scene* scene, cmp_ctx_t* context);
+void scene_load(Scene* scene, const char* path);
+void scene_deserialize(Scene* scene, cmp_ctx_t* context);
 
 
 #endif

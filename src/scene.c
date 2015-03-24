@@ -21,10 +21,12 @@ Scene* scene_create() {
 
 void scene_destroy(Scene* scene) {
     cpSpaceFree(scene->space);
+
+    // entities has to be first, because of relation with components
+    pool_destroy(scene->entities);
     pool_destroy(scene->transforms);
     pool_destroy(scene->scripts);
     pool_destroy(scene->sprites);
-    pool_destroy(scene->entities);
     free(scene);
 }
 

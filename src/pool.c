@@ -12,19 +12,19 @@ Pool* pool_create(unsigned int item_size, unsigned int capacity, void (*destroy)
     pool->capacity = capacity;
 
     unsigned int pool_size = item_size * capacity;
+    pool->items = malloc(pool_size);
 
-    capacity = capacity - 1;
-    pool->items = malloc(item_size * capacity);
+    PoolObject* first_item = &pool->items[0];
+    PoolObject* last_item = (PoolObject*) (((char*) first_item) + pool_size - item_size);
 
-    pool->available = &pool->items[0];
+    pool->available = first_item;
     pool->allocated = NULL;
-    PoolObject* last_item = pool->items + pool_size;
 
     PoolObject* item;
-    for(item = pool->items ; item < last_item; item += item_size) {
+    for(item = first_item ; item < last_item; item = (PoolObject*) ((char*) item + item_size)) {
         item->pool.container = pool;
         item->pool.previous = NULL;
-        item->pool.next = item + item_size;
+        item->pool.next = ((char*) item) + item_size;
     }
     last_item->pool.container = pool;
     last_item->pool.previous = NULL;

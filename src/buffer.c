@@ -28,7 +28,6 @@ GLuint indexbuffer_create(const void* values, size_t size) {
 }
 
 
-
 void buffer_bind(GLuint buffer) {
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
 }

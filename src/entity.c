@@ -31,11 +31,6 @@ void* entitypool_add(Pool* pool) {
 }
 
 
-void entity_free(Entity* entity) {
-    componentlist_clear(&entity->components);
-}
-
-
 void entity_destroy(Entity* entity) {
     componentlist_clear(&entity->components);
     lua_close(entity->L);

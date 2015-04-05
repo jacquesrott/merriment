@@ -40,8 +40,8 @@ ScriptComponent* scriptpool_add(Pool* pool, lua_State* L, const char* path) {
 }
 
 
-void scriptcomponent_destroy(ScriptComponent* item) {
-    pool_set_available(item->pool.container, (PoolObject*) item);
+void scriptcomponent_destroy(ScriptComponent* component) {
+    pool_set_available(component->pool.container, (PoolObject*) component);
 }
 
 

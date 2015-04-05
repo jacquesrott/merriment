@@ -64,7 +64,5 @@ void game_destroy(Game* game) {
     glcontext_destroy(game->gl);
 
     window_destroy(game->window);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Quitting Galaczy.\n");
-    SDL_Quit();
     free(game);
 }

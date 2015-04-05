@@ -1,3 +1,5 @@
+#include <SDL2/SDL_image.h>
+
 #include "window.h"
 #include "error.h"
 #include "config.h"
@@ -10,8 +12,6 @@ SDL_Window* window_create(int width, int height) {
 
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
-    glcontext_init();
-
     SDL_Window* window = SDL_CreateWindow(
             "Galaczy",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -22,12 +22,22 @@ SDL_Window* window_create(int width, int height) {
         print_sdl_error("Failed to create window");
     }
 
+    int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+    int img_init = IMG_Init(flags);
+
+    if((img_init & flags) != flags) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+            "IMG_Init: Failed to init required jpg and png support : %s\n", IMG_GetError());
+    }
+
     return window;
 }
 
 
 void window_destroy(SDL_Window* window) {
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Quitting Galaczy.\n");
     SDL_DestroyWindow(window);
+    SDL_Quit();
 }
 
 
@@ -42,7 +52,12 @@ void glcontext_init() {
 
 
 SDL_GLContext* glcontext_create(SDL_Window* window) {
+    glcontext_init();
+
     SDL_GLContext* gl = SDL_GL_CreateContext(window);
+
+    SDL_GL_SetSwapInterval(0);
+
     check_gl_errors("GL Context creation");
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -66,4 +81,5 @@ SDL_GLContext* glcontext_create(SDL_Window* window) {
 
 void glcontext_destroy(SDL_GLContext* gl) {
     SDL_GL_DeleteContext(gl);
+    IMG_Quit();
 }

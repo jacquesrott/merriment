@@ -38,6 +38,7 @@ GLuint texture_load(const char* path) {
     texture = IMG_Load(path);
 
     if(texture == NULL) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Texture \"%s\" couldn't be loaded. IMG_Load: %s\n", path, IMG_GetError());
         return id;
     }
 

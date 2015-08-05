@@ -4,12 +4,11 @@ Entity/Components based 2D engine written in C with embedded Lua scripts.
 
 ## Description
 
-Engine written on my spare. Wanted to do a game, ended up doing an engine ... again. Hey, engines are fun.
-Sometimes I come back and continue my journey, still have a lot of ideas to implement.
+Engine written on my spare time. I wanted to do a game, ended up doing an engine ... again. Hey, engines are fun.
 
 ## Usage
 
-Nothing much can be done so far, except loading scenes with scripts and program shaders.
+It is currently possible to load scenes with scripts and program shaders.
 You can run and load a scene :
 
 ```
@@ -23,10 +22,9 @@ scons -Q && ./bin/merriment
 - OpenGL (OS X only)
 - chipmunk
 - LuaJIT
+- python2.7 (only required for the so-called "editor")
 
-- python2.7 (only require for the so called "editor")
-
-## Scene example
+## Editor
 
 ```json
 {
@@ -70,11 +68,40 @@ scons -Q && ./bin/merriment
 }
 ```
 
-Install the python requirements in `/editor/` and you can convert it to msgpack format with the following command :
+Install the python requirements from `/editor/requirements.txt` with
+
+```
+pip install -r editor/requirements.txt
+```
+
+It is possible to convert a json scene to msgpack format with the following command :
 
 ```
 python editor/compiler.py
 ```
+
+To unpack a scene :
+
+```
+python editor/decompiler.py
+```
+
+By default, `compiler` and `decompiler` will run through all the files of `assets/editor/` or `assets/scenes/`.
+In order to (de)compile only one file, the usage would be :
+
+```
+python editor/decompiler.py MSGPACK_FILE_PATH
+```
+
+or
+
+```
+python editor/compiler.py JSON_FILE_PATH
+```
+
+#### Hot reload
+
+If you have already a running application, it is possible to hotreload a scene by pressing `BACKSPACE`.
 
 ## Why Merriment ?
 

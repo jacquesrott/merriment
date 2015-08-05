@@ -13,7 +13,7 @@ Nothing much can be done so far, except loading scenes with scripts and program 
 You can run and load a scene :
 
 ```
-scons -Q && ./bin/dwarves
+scons -Q && ./bin/merriment
 ```
 
 ## Requirements
@@ -75,6 +75,16 @@ Install the python requirements in `/editor/` and you can convert it to msgpack 
 ```
 python editor/compiler.py
 ```
+
+## Why Merriment ?
+
+```
+mer•ri•ment (mĕrˈĭ-mənt)
+
+    n.  High-spirited fun and enjoyment; hilarity.
+```
+
+It's jun for fun and for learning.
 
 ## Resources
 

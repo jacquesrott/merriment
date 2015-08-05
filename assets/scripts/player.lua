@@ -1,4 +1,4 @@
-local gz = require "assets/scripts/galaczy"
+local mer = require "assets/scripts/merriment"
 
 Player = {}
 

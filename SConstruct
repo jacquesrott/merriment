@@ -76,7 +76,7 @@ if TEST_TARGET in COMMAND_LINE_TARGETS:
     sources += env.Glob("build/test/main.c")
     sources = [s for s in sources if s.path != "build/main.c"]
     tt = env.Program(
-        "bin/test-dwarves",
+        "bin/test-merriment",
         source=sources,
     )
     test_alias = Alias(
@@ -86,6 +86,6 @@ if TEST_TARGET in COMMAND_LINE_TARGETS:
     )
 else:
     dt = env.Program(
-        target="bin/dwarves",
+        target="bin/merriment",
         source=sources)
     Default(dt)

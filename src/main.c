@@ -16,7 +16,7 @@
 #include "timer.h"
 
 
-Game* galaczy;
+Game* merriment;
 
 
 void handler(int sig) {
@@ -37,7 +37,7 @@ int main() {
     signal(SIGSEGV, handler);
     int width = 1440, height = 900;
 
-    galaczy = game_create(width, height);
+    merriment = game_create(width, height);
 
     float near = -1.0,
           far = 1.0,
@@ -48,35 +48,35 @@ int main() {
 
     mat4 view = m4_ortho3d(far, near, top, bottom, left, right);
 
-    game_init(galaczy);
+    game_init(merriment);
 
     int zoom = 0;
 
-    while(galaczy->run == 0) {
-        timer_update(galaczy->timer);
-        while(SDL_PollEvent(&galaczy->event)) {
-            switch(galaczy->event.type) {
+    while(merriment->run == 0) {
+        timer_update(merriment->timer);
+        while(SDL_PollEvent(&merriment->event)) {
+            switch(merriment->event.type) {
                 case SDL_QUIT:
-                    galaczy->run = 1;
+                    merriment->run = 1;
                     break;
                 case SDL_KEYUP:
-                    switch (galaczy->event.key.keysym.sym) {
+                    switch (merriment->event.key.keysym.sym) {
                         case SDLK_BACKSPACE:
-                            game_reload(galaczy, "tmp/scene-save.mp");
+                            game_reload(merriment, "tmp/scene-save.mp");
                             break;
                         default:
                             break;
                     }
                     break;
                 case SDL_MOUSEWHEEL:
-                    zoom = abs(galaczy->event.wheel.y);
-                    if(galaczy->event.wheel.y < 0) {
+                    zoom = abs(merriment->event.wheel.y);
+                    if(merriment->event.wheel.y < 0) {
                         left *= zoom;
                         right *= zoom;
                         top *= zoom;
                         bottom *= zoom;
                         view = m4_ortho3d(far, near, top, bottom, left, right);
-                    } else if(galaczy->event.wheel.y > 0) {
+                    } else if(merriment->event.wheel.y > 0) {
                         left /= zoom;
                         right /= zoom;
                         top /= zoom;
@@ -89,11 +89,11 @@ int main() {
             }
         }
 
-        while(game_is_synced(galaczy)) {
-            game_step(galaczy);
+        while(game_is_synced(merriment)) {
+            game_step(merriment);
         }
 
-        ScriptComponent* script = galaczy->scene->scripts->allocated;
+        ScriptComponent* script = merriment->scene->scripts->allocated;
         while(script) {
             ScriptComponent* next = script->pool.next;
             scriptcomponent_update(script, script->component->entity->L);
@@ -102,10 +102,10 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        SDL_GL_SwapWindow(galaczy->window);
+        SDL_GL_SwapWindow(merriment->window);
     }
 
-    game_destroy(galaczy);
+    game_destroy(merriment);
 
     return EXIT_SUCCESS;
 }

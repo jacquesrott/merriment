@@ -13,7 +13,7 @@ SDL_Window* window_create(int width, int height) {
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 
     SDL_Window* window = SDL_CreateWindow(
-            "Galaczy",
+            "Merriment",
             SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             width, height,
             SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
@@ -35,7 +35,7 @@ SDL_Window* window_create(int width, int height) {
 
 
 void window_destroy(SDL_Window* window) {
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Quitting Galaczy.\n");
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Quitting Merriment.\n");
     SDL_DestroyWindow(window);
     SDL_Quit();
 }

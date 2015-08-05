@@ -13,7 +13,6 @@
 #include "texture.h"
 #include "shader.h"
 #include "buffer.h"
-#include "planet.h"
 #include "timer.h"
 
 

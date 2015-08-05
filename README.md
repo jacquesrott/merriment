@@ -1,72 +1,82 @@
-# Galaczy
+# Merriment
 
-Space exploration and identity seeking.
+Entity/Components based 2D engine written in C with embedded Lua scripts.
 
-## Game play ideas
+## Description
 
-* Spaceship exploring the galaxy in 2ds
-* Player has to deal with gravity of the planets and objects
-* Player can go out of the spaceship and walk around the planets or asteroids
-* Don't make it boring, player has always something to do
-* Player has to find elements of a lost alien civilization
+Engine written on my spare. Wanted to do a game, ended up doing an engine ... again. Hey, engines are fun.
+Sometimes I come back and continue my journey, still have a lot of ideas to implement.
 
+## Usage
 
-### Character
+Nothing much can be done so far, except loading scenes with scripts and program shaders.
+You can run and load a scene :
 
-* Can manage equipment
-* Has jetpack
-* Handles only some quantity of gravity/heat/cold
-* Has life points
-* Can be ejected from spaceship
+```
+scons -Q && ./bin/dwarves
+```
 
+## Requirements
 
-### Spaceship
+- Scons
+- SDL2
+- OpenGL (OS X only)
+- chipmunk
+- LuaJIT
 
-* Has hull armor
-* Has shield
-* Can be improved or changed
+- python2.7 (only require for the so called "editor")
 
+## Scene example
 
-### Planet Gameplay
+```json
+{
+    "entities": [
+        {
+            "components": [
+                [
+                    "script",
+                    {
+                        "instance": {},
+                        "path": "assets/scripts/player.lua"
+                    }
+                ],
+                [
+                    "transform",
+                    {
+                        "angle": 0.0,
+                        "position": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ]
+                    }
+                ],
+                [
+                    "sprite",
+                    {
+                        "sprite": "assets/sprites/red_square.png",
+                        "program": ["assets/shaders/vertex.vs", "assets/shaders/fragment.fs"]
+                    }
+                ]
+            ],
+            "name": "test"
+        }
+    ],
+    "path": "scene.mp",
+    "source": "scene.json"
+}
+```
 
-* Player have to handle atmosphere shield when landing on planets
-* Player has to be careful to avoid to be crushed by gravity when going out
+Install the python requirements in `/editor/` and you can convert it to msgpack format with the following command :
 
+```
+python editor/compiler.py
+```
 
-### Stars Gameplay
+## Resources
 
-* If too close, will destroy spaceship
-* Spaceship reloads when passing near the stars but destroys atmosphere shield
-
-### Black holes gameplay
-
-* If proper equipment can *teleport* you to another part of the galaxy
-* Otherwise destroys your spaceship
-
-### Destroyed spaceships
-
-* Player can find equipment outside
-* Can go inside some parts with the character
-* Decor elements can hurt/kill you
-* Can find important equipment
-
-### Abandonned spaceships
-
-* Rotating gravity
-
-### Space stations
-
-### Animals on planet
-
-* Vegetarian will have the minimal size of the lowest leaf on trees
-* Carnivore only a third of the vegetarian size
-* Can have animal packs
-
-### Abandonned spacestations on planets
-
-
-### Forgotten alien civilization temple
-
-* Has puzzle inside which gives you access to a room
-* Room indicates you the place to the next temple
-* Gives good stuff
+- [Game Engine Architecture (1st Edition)](http://www.amazon.com/Game-Engine-Architecture-Jason-Gregory/dp/1568814135/). (2009). Florida: Jason Gregory
+- [Game Programming Patterns](http://gameprogrammingpatterns.com/). (2014). Seattle: Robert Nystrom

@@ -57,8 +57,8 @@ env.Append(CCFLAGS=[
 ])
 env.Append(LIBPATH=['/usr/local/lib/'])
 env.Append(LINKFLAGS=[
-    '-framework', 'SDL2',
-    '-framework', 'SDL2_image',
+    '-lSDL2',
+    '-lSDL2_image',
     '-framework', 'OpenGL',
     '-framework', 'Cocoa',
     '-Bstatic', '-lluajit-5.1',
